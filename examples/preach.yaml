@@ -1,0 +1,8 @@
+psalms:
+  - type: yaml
+    override: >
+      foo:
+        bar: 'hello world'
+    destination: 
+      file: "my-yaml.yaml"
+      path: "$."

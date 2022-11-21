@@ -1,0 +1,13 @@
+{
+    "psalms": [
+        {
+            "type": "yaml",
+            "sourceContent": "my:\n  text: 'hello world'",
+            "destination": {
+                "file": "my-yaml.yaml",
+                "path": "$.",
+                "override": true
+            }
+        }
+    ]
+}
