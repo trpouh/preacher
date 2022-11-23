@@ -1,8 +1,9 @@
+blurb:
+  version: 0.0.1
 psalms:
   - type: yaml
     override: >
       foo:
         bar: 'hello world'
-    destination: 
-      file: "my-yaml.yaml"
-      path: "$."
+    path: "$."
+    file: "my-yaml.yaml"

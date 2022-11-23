@@ -1,15 +1,21 @@
+mod bible;
 mod config;
-mod preacher;
 mod psalms;
 
-use crate::psalms::{yaml::YamlPsalm, Psalm};
+use crate::bible::{initialize, Bible};
 use crate::config::parse_args;
+use crate::psalms::Psalm;
+
+use config::Invocation;
 
 fn main() {
-    let args = parse_args();
+    let invocation: Invocation = parse_args();
 
-    let psalm: YamlPsalm = YamlPsalm {};
-    psalm.invoke(psalms::yaml::YamlContext { });
+    let _bible = initialize(invocation);
 
-    println!("arg: {:#?}", args)
+    // println!("Bible: {:#?}", _bible);
+
+    if let Ok(bible) = _bible {
+        bible.preach();
+    }
 }
