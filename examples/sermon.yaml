@@ -6,4 +6,4 @@ psalms:
       foo:
         bar: 'hello world'
     path: "$."
-    file: "my-yaml.yaml"
+    file: "files/my-yaml.yaml"

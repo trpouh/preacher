@@ -5,7 +5,7 @@ use std::fs;
 use std::iter::Enumerate;
 use std::path::Path;
 
-use crate::config::Invocation;
+use crate::worship::Worship;
 use crate::psalms::Psalm;
 use crate::psalms::yaml::YamlPsalm;
 
@@ -15,9 +15,9 @@ pub enum PsalmContext {
     yaml(crate::psalms::yaml::YamlContext),
 }
 
-fn invoke_psalm(psalm: &PsalmContext) -> Result<String,String> {
+fn invoke_psalm(psalm: &PsalmContext, worship: &Worship) -> Result<String,String> {
     match (psalm) {
-        PsalmContext::yaml(ctx) => YamlPsalm::invoke(ctx)
+        PsalmContext::yaml(ctx) => YamlPsalm::invoke(ctx, &worship)
     }
 }
 
@@ -28,27 +28,27 @@ pub struct Blurb {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct Bible {
+pub struct Sermon {
     blurb: Blurb,
     psalms: Vec<PsalmContext>,
 }
 
-impl Bible {
+impl Sermon {
 
-    pub fn preach(&self) {
+    pub fn preach(&self, worship: &Worship) {
 
         self.psalms.iter().for_each(|psalm| {
             
-            let res = invoke_psalm(&psalm);
+            let res = invoke_psalm(&psalm, worship);
             print!("was ok: {}", res.is_ok())
 
         });
     }
 }
 
-pub fn initialize(invocation: Invocation) -> Result<Bible, String> {
-    let sermon_path = Path::new(&invocation.run_in_dir)
-        .join(&invocation.sermon)
+pub fn initialize(worship: &Worship) -> Result<Sermon, String> {
+    let sermon_path = Path::new(&worship.run_in_dir)
+        .join(&worship.sermon)
         .to_owned();
 
     fs::read_to_string(sermon_path)

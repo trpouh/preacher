@@ -2,7 +2,7 @@ pub use clap::Parser;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
-pub struct Invocation {
+pub struct Worship {
 
     pub repo: Option<String>,
     
@@ -13,6 +13,6 @@ pub struct Invocation {
     pub run_in_dir: String
 }
 
-pub fn parse_args () -> Invocation {
-    Invocation::parse()
+pub fn parse_args () -> Worship {
+    Worship::parse()
 }

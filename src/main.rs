@@ -1,21 +1,20 @@
-mod bible;
-mod config;
+mod sermon;
+mod worship;
 mod psalms;
 
-use crate::bible::{initialize, Bible};
-use crate::config::parse_args;
+use crate::sermon::{initialize, Sermon};
+use crate::worship::parse_args;
 use crate::psalms::Psalm;
 
-use config::Invocation;
+use worship::Worship;
 
 fn main() {
-    let invocation: Invocation = parse_args();
 
-    let _bible = initialize(invocation);
+    let worship: Worship = parse_args();
 
-    // println!("Bible: {:#?}", _bible);
+    let _sermon = initialize(&worship);
 
-    if let Ok(bible) = _bible {
-        bible.preach();
+    if let Ok(sermon) = _sermon {
+        sermon.preach(&worship);
     }
 }
