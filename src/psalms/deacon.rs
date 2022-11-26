@@ -32,11 +32,12 @@ impl<'a> FileDeacon<'a> {
      * Writes contents to a file. If not specified otherwise, will override.
      */
     pub fn write(&self, contents: &String) -> Result<String, String> {
+
         let file = self.check_prerequisites();
 
         match file {
             Ok(path) => fs::write(path, contents),
-            Err(err) => todo!()
+            Err(_) => todo!()
         };
 
         Ok(String::new())
