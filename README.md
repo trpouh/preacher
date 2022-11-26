@@ -10,5 +10,5 @@ This project serves two functions:
 The architecture of the preacher is best described in this picture.
 
 <p align="center">
-  <img src="https://github.com/trpouh/preacher/blob/docs/docs/arch.png?raw=true" alt="Preachers architecture"/>
+  <img src="https://github.com/trpouh/preacher/blob/docs/docs/arch.svg?raw=true" alt="Preachers architecture"/>
 </p>
