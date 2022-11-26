@@ -27,7 +27,7 @@ pub fn parse_args () -> Worship {
 
     let mut worship = Worship::parse();
     
-    worship.tmp_dir = format!("{}/{}", worship.tmp_dir, "test");//Uuid::new_v4());
+    worship.tmp_dir = format!("{}/{}", worship.tmp_dir, Uuid::new_v4());
     
     worship
 
