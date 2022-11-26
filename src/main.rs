@@ -1,8 +1,10 @@
+extern crate yaml_rust;
+
 mod sermon;
 mod worship;
 mod psalms;
 
-use crate::sermon::{initialize, Sermon};
+use crate::sermon::initialize;
 use crate::worship::parse_args;
 use crate::psalms::Psalm;
 

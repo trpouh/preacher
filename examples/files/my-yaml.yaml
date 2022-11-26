@@ -1,2 +1,6 @@
 foo:
-  bar: 'hello world'
+  bar:
+    girlfriend:
+      name: dana
+      height: 140
+devices: []

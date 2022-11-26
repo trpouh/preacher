@@ -1,9 +1,23 @@
 blurb:
   version: 0.0.1
 psalms:
+
   - type: yaml
     override: >
-      foo:
-        bar: 'hello world'
-    path: "$."
+      girlfriend:
+        name: dana
+        height: 140
+    path: "$.foo.bar"
+    file: "files/my-yaml.yaml"
+  
+  
+  - type: yaml
+    override: "[a.js, b.js]"
+    path: "$.devices"
+    file: "files/my-yaml.yaml"
+
+  
+  - type: yaml
+    override: "[]"
+    path: "$.devices"
     file: "files/my-yaml.yaml"

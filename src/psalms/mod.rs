@@ -1,5 +1,3 @@
-use serde::Deserialize;
-
 use crate::worship::Worship;
 
 pub mod yaml;
