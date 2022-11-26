@@ -3,6 +3,7 @@ extern crate yaml_rust;
 mod sermon;
 mod worship;
 mod psalms;
+mod lib;
 
 use crate::sermon::initialize;
 use crate::worship::parse_args;
@@ -16,7 +17,8 @@ fn main() {
 
     let _sermon = initialize(&worship);
 
-    if let Ok(sermon) = _sermon {
-        sermon.preach(&worship);
+    match _sermon {
+        Ok(sermon) => sermon.preach(&worship),
+        Err(err) => println!("Hallelujah! Couldn't start preaching because of: {}", err)
     }
 }

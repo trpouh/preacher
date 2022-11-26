@@ -84,5 +84,5 @@ impl<'a> FileDeacon<'a> {
 }
 
 fn get_real_path(worship: &Worship, file_name: &str) -> PathBuf {
-    Path::new(&worship.run_in_dir).join(&file_name).to_owned()
+    Path::new(&worship.target_folder).join(&file_name).to_owned()
 }

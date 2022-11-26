@@ -1,7 +1,4 @@
-use std::thread::current;
-
 use serde::Deserialize;
-use serde_yaml::Value;
 
 use crate::{Psalm, psalms::deacon::FileDeacon, worship::Worship};
 
@@ -104,7 +101,7 @@ pub struct YamlPsalm {}
 impl YamlPsalm {
     fn r#override(contents: &str, yaml_string: &str, path: &str) -> String {
 
-        let mut parsed_input: Result<serde_yaml::Value, _> = serde_yaml::from_str(contents);
+        let parsed_input: Result<serde_yaml::Value, _> = serde_yaml::from_str(contents);
         let parsed_appendix: Result<serde_yaml::Value, _> = serde_yaml::from_str(yaml_string);
 
         if let Err(err) = parsed_input {

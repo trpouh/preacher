@@ -8,3 +8,4 @@ clap = {version = "4.0.26", features = ["derive"]}
 serde = { version = "1.0.126", features = ["derive"] }
 serde_yaml = "0.9.14"
 yaml-rust = "0.4"
+uuid = {version="1.2.2", features=["v4", "fast-rng"]}
