@@ -2,10 +2,10 @@ use serde::Deserialize;
 use serde_yaml::from_str;
 use std::fmt::Debug;
 use std::fs;
-use std::iter::Enumerate;
 use std::path::Path;
 
 use crate::worship::Worship;
+
 use crate::psalms::Psalm;
 use crate::psalms::yaml::YamlPsalm;
 
@@ -21,15 +21,8 @@ fn invoke_psalm(psalm: &PsalmContext, worship: &Worship) -> Result<String,String
     }
 }
 
-
-#[derive(Debug, Deserialize)]
-pub struct Blurb {
-    version: String,
-}
-
 #[derive(Debug, Deserialize)]
 pub struct Sermon {
-    blurb: Blurb,
     psalms: Vec<PsalmContext>,
 }
 
@@ -47,6 +40,7 @@ impl Sermon {
 }
 
 pub fn initialize(worship: &Worship) -> Result<Sermon, String> {
+
     let sermon_path = Path::new(&worship.run_in_dir)
         .join(&worship.sermon)
         .to_owned();

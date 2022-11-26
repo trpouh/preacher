@@ -1,6 +1,5 @@
 foo:
-  bar:
-    girlfriend:
-      name: dana
-      height: 140
-devices: []
+  bar: "test"
+list:
+- list_item_a
+- list_item_b
