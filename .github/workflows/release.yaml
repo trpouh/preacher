@@ -17,5 +17,7 @@ jobs:
       - name: Release
         id: release
         uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         with:
           prerelease: true
