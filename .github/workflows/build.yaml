@@ -1,0 +1,40 @@
+# .github/workflows/build.yml
+name: build-binary
+
+on:
+  push:
+    #branches: [wip]
+    tags:
+      - "*"
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout Code
+        uses: actions/checkout@master
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+
+      - name: Compile
+        id: compile
+        uses: rust-build/rust-build.action@v1.4.0
+        with:
+          RUSTTARGET: x86_64-unknown-linux-musl
+          UPLOAD_MODE: none
+        env:
+          GITHUB_TOKEN: ""
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        env:
+          GITHUB_TOKEN: ""
+        with:
+          name: Binary
+          path: |
+            ${{ steps.compile.outputs.BUILT_ARCHIVE }}
+            ${{ steps.compile.outputs.BUILT_CHECKSUM }}
