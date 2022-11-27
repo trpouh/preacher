@@ -15,19 +15,19 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - target: x86_64-unknown-linux-musl
-            archive: tar.gz
+#          - target: x86_64-unknown-linux-musl
+#            archive: tar.gz
           - target: x86_64-apple-darwin
             archive: zip
     steps:
       - uses: actions/checkout@master
 
       - name: Release
+        id: release
         uses: softprops/action-gh-release@v1
         with:
-          name: Release {{github.ref}}
           body: >
-            Preacher release
+            New release
           prerelease: true
       
       - name: Compile and release
@@ -39,3 +39,5 @@ jobs:
           EXTRA_FILES: "README.md"
           ARCHIVE_TYPES: ${{ matrix.archive }}
           MINIFY: "yes"
+          UPLOAD_MODE: "release"
+          UPLOAD_URL: ${{ steps.release.upload_url}}
