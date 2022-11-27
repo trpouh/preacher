@@ -17,8 +17,9 @@ jobs:
         uses: actions/checkout@master
 
       - name: Create Release
-        id: create_release
         uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
 
       - name: Compile
         id: compile
@@ -26,13 +27,11 @@ jobs:
         with:
           RUSTTARGET: x86_64-unknown-linux-musl
           UPLOAD_MODE: none
-        env:
-          GITHUB_TOKEN: ""
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         env:
-          GITHUB_TOKEN: ""
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
         with:
           name: Binary
           path: |
