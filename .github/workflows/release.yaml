@@ -3,7 +3,7 @@ name: create-release
 
 on:
   push:
-    #branches: [wip]
+    # branches: [wip]
     tags:
       - "*"
 
@@ -20,4 +20,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         with:
+          release_name: Release v${{ github.ref }}
           prerelease: true
