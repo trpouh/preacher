@@ -21,6 +21,15 @@ jobs:
             archive: zip
     steps:
       - uses: actions/checkout@master
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release {{github.ref}}
+          body: >
+            Preacher release
+          prerelease: true
+      
       - name: Compile and release
         uses: rust-build/rust-build.action@master
         env:
