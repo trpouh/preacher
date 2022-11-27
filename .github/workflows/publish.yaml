@@ -2,10 +2,8 @@
 name: build-binary
 
 on:
-  push:
-    #branches: [wip]
-    tags:
-      - "*"
+  release:
+    types: [created]
 
 jobs:
   release:
@@ -22,15 +20,8 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
-      - name: Release
-        id: release
-        uses: softprops/action-gh-release@v1
-        with:
-          body: >
-            New release
-          prerelease: true
-      
       - name: Compile and release
+        id: compile
         uses: rust-build/rust-build.action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -39,5 +30,3 @@ jobs:
           EXTRA_FILES: "README.md"
           ARCHIVE_TYPES: ${{ matrix.archive }}
           MINIFY: "yes"
-          UPLOAD_MODE: "release"
-          UPLOAD_URL: ${{ steps.release.upload_url}}

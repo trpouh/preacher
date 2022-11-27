@@ -1,0 +1,21 @@
+# .github/workflows/build.yml
+name: create-release
+
+on:
+  push:
+    #branches: [wip]
+    tags:
+      - "*"
+
+jobs:
+  release:
+    name: create release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Release
+        id: release
+        uses: softprops/action-gh-release@v1
+        with:
+          prerelease: true
