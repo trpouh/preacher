@@ -20,5 +20,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         with:
-          name: Release v${{ github.ref }}
+          name: Release v${{ github.ref.refs.tags }}
           prerelease: true

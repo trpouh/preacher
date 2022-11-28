@@ -1,5 +1,5 @@
 #!/bin/zsh
-TAG=0.0.2
+TAG=0.0.3
 URL=https://github.com/trpouh/preacher/releases/download/${TAG}/preacher_${TAG}_x86_64-apple-darwin.zip
 
 echo "[preacher] installing preacher v${TAG} - amen!";
@@ -23,5 +23,5 @@ psalms:
   - type: Hello
 EOT
 
-echo "[preacher] start your first sermon with './preacher'"
+echo "[preacher] start your first sermon with './preacher --tmp-dir ../tmp'"
 

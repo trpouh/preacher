@@ -59,6 +59,7 @@ pub fn initialize(worship: &Worship) -> Result<Sermon, String> {
         .to_owned();
 
         //TODO: implement just file checking instead of loading
+        //TODO: same directory creates recursion
         if let Ok(_) = fs::read_to_string(sermon_path) {
             println!("Copying local folder {} into folder {}", worship.source_folder, tmp_dir);
             io::create_dir(&tmp_dir, true);
