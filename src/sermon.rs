@@ -1,13 +1,12 @@
 use serde::Deserialize;
 use serde_yaml::from_str;
-use std::error::Error;
 use std::fmt::Debug;
 use std::fs;
 use std::path::Path;
-use std::process::Command;
 
 use crate::lib::io;
-use crate::worship::{Worship, self};
+use crate::psalms::hello::HelloPsalm;
+use crate::worship::Worship;
 
 use crate::psalms::Psalm;
 use crate::psalms::yaml::YamlPsalm;
@@ -16,11 +15,13 @@ use crate::psalms::yaml::YamlPsalm;
 #[serde(tag = "type")]
 pub enum PsalmContext {
     Yaml(crate::psalms::yaml::YamlContext),
+    Hello(crate::psalms::hello::HelloContext)
 }
 
 fn invoke_psalm(psalm: &PsalmContext, worship: &Worship) -> Result<String,String> {
-    match (psalm) {
-        PsalmContext::Yaml(ctx) => YamlPsalm::invoke(ctx, &worship)
+    match psalm {
+        PsalmContext::Yaml(ctx) => YamlPsalm::invoke(ctx, &worship),
+        PsalmContext::Hello(ctx) => HelloPsalm::invoke(ctx, worship),
     }
 }
 
@@ -50,12 +51,22 @@ pub fn initialize(worship: &Worship) -> Result<Sermon, String> {
         println!("Cloning git repo {} into folder {}", repo, tmp_dir);
         io::create_dir(&tmp_dir, true);
         io::clone_to_dir(repo, tmp_dir, worship.branch.as_ref().map(|x| &**x))
-    } else if let Some(source_dir) = &worship.source_folder {
-        println!("Copying local folder {} into folder {}", source_dir, tmp_dir);
-        io::create_dir(&tmp_dir, true);
-        io::copy_dir(source_dir, tmp_dir);
+        
     } else {
-        return Err("No location for sermon found. Either provide a git repo via --repo or a local folder via --source-folder".to_owned());
+
+        let sermon_path = Path::new( &worship.source_folder )
+        .join(&worship.sermon)
+        .to_owned();
+
+        //TODO: implement just file checking instead of loading
+        if let Ok(_) = fs::read_to_string(sermon_path) {
+            println!("Copying local folder {} into folder {}", worship.source_folder, tmp_dir);
+            io::create_dir(&tmp_dir, true);
+            io::copy_all_files_to_dir(&worship.source_folder, tmp_dir);
+        } else {
+            println!("Couldn't find sermon {} in local folder: {}", &worship.sermon, &worship.source_folder);
+            return Err("No sermon found".to_string());
+        }
     }
 
     let sermon_path = Path::new(tmp_dir)

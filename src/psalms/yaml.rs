@@ -1,8 +1,8 @@
 use serde::Deserialize;
 
-use crate::{Psalm, psalms::deacon::FileDeacon, worship::Worship};
+use crate::{Psalm, psalms::deacons::file::FileDeacon, worship::Worship};
 
-use super::deacon::FileDestination;
+use super::deacons::file::FileDestination;
 
 #[cfg(test)]
 mod tests{
@@ -96,6 +96,20 @@ pub struct YamlContext {
     r#override: String
 }
 
+impl Psalm<YamlContext> for YamlPsalm {
+
+    fn invoke(context: &YamlContext, worship: &Worship) -> Result<String,String> {
+
+        let file_deacon = FileDeacon::spawn(&context.file, &worship);
+
+        let contents = YamlPsalm::r#override(&file_deacon.load()?, &context.r#override, &context.path);
+
+        file_deacon.write(&contents);
+        
+        Ok("OK".to_owned())
+    }
+}
+
 pub struct YamlPsalm {}
 
 impl YamlPsalm {
@@ -142,21 +156,5 @@ impl YamlPsalm {
         current_value[last.unwrap()] = parsed_appendix.unwrap();
         serde_yaml::to_string(&root).unwrap()
 
-    }
-}
-
-impl Psalm<YamlContext> for YamlPsalm {
-
-    fn invoke(context: &YamlContext, worship: &Worship) -> Result<String,String> {
-
-        let file_deacon = FileDeacon::spawn(&context.file, &worship);
-
-        let contents = YamlPsalm::r#override(&file_deacon.load()?, &context.r#override, &context.path);
-
-        file_deacon.write(&contents);
-        
-        println!("yaml: {:#?}", contents);
-
-        Ok("OK".to_owned())
     }
 }

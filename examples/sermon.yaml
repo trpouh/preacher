@@ -1,10 +1,11 @@
 psalms:
-  - type: Yaml
-    override: >
-      is_obj: true
-    path: "$.foo.bar"
-    file: "files/my-yaml.yaml"
-  - type: Yaml
-    override: "[a.js, b.js]"
-    path: "$.devices"
-    file: "files/my-yaml.yaml"
+#  - type: Yaml
+#    override: >
+#      is_obj: true
+#    path: "$.foo.bar"
+#    file: "files/my-yaml.yaml"
+#  - type: Yaml
+#    override: "[a.js, b.js]"
+#    path: "$.devices"
+#    file: "files/my-yaml.yaml"
+  - type: Hello 

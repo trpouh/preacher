@@ -10,8 +10,8 @@ pub struct Worship {
     #[arg(short, long)]
     pub branch: Option<String>,
 
-    #[arg(long)]
-    pub source_folder: Option<String>,
+    #[arg(long, default_value_t = String::from("./"))]
+    pub source_folder: String,
     
     #[arg(short, long, default_value_t = String::from("sermon.yaml"))]
     pub sermon: String,
