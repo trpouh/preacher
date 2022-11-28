@@ -13,10 +13,13 @@ Sorry but no.
 
 ### MacOS
 
-Kickstart with the installation script:
 
-```shell
-curl -s -L https://raw.githubusercontent.com/trpouh/preacher/wip/kickstarter/install-mac.sh | bash
+
+```
+
+wget https://github.com/trpouh/preacher/releases/download/0.0.1/preacher_0.0.1_x86_64-apple-darwin.zip
+
+
 ```
 
 ### Linux
