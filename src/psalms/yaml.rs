@@ -87,7 +87,8 @@ list:
 
 }
 
-#[derive(Debug, Deserialize)]
+#[psalmer::psalm_context]
+#[derive(Deserialize)]
 pub struct YamlContext {
     file: FileDestination,
 
@@ -106,7 +107,7 @@ impl Psalm<YamlContext> for YamlPsalm {
 
         file_deacon.write(&contents);
 
-        Ok(PsalmOutput::empty())
+        Ok(PsalmOutput::empty(context.info.clone()))
     }
 }
 

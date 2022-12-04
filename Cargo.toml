@@ -5,7 +5,7 @@ version = "0.1.0"
 
 [dependencies]
 clap = {version = "4.0.26", features = ["derive"]}
-psalmer = {path = "./psalm-crate"}
+psalmer = {path = "./psalmer"}
 serde = {version = "1.0.126", features = ["derive"]}
 serde_yaml = "0.9.14"
 uuid = {version = "1.2.2", features = ["v4", "fast-rng"]}

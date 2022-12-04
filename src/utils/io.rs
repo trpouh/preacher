@@ -33,11 +33,10 @@ pub struct CopyOptions<'a> {
     pub target_dir: &'a str,
     pub exclude: Option<Vec<&'a str>>,
     pub without_parent_folder: Option<bool>,
-    pub ensure_target_exists: Option<bool>
+    pub ensure_target_exists: Option<bool>,
 }
 
 pub fn copy_dir(copy_options: &CopyOptions) {
-
     if copy_options.ensure_target_exists.unwrap_or(false) {
         create_dir(copy_options.target_dir, true);
     }
@@ -50,11 +49,19 @@ pub fn copy_dir(copy_options: &CopyOptions) {
         copy_options.source_dir.to_owned()
     };
 
-    copy_options.exclude.as_ref().unwrap_or(&Vec::default()).iter().for_each(|dir| {
-        command.args(["--exclude", dir]);
-    });
+    copy_options
+        .exclude
+        .as_ref()
+        .unwrap_or(&Vec::default())
+        .iter()
+        .for_each(|dir| {
+            command.args(["--exclude", dir]);
+        });
 
-    command.arg("-r").arg(&source_dir).arg(copy_options.target_dir);
+    command
+        .arg("-r")
+        .arg(&source_dir)
+        .arg(copy_options.target_dir);
 
     if let Ok(mut child) = command.spawn() {
         let exit_status = child.wait();
@@ -90,7 +97,12 @@ pub fn create_dir(dir: &str, create_parents: bool) {
             if status.success() {
                 println!(
                     "Successfully created dir {} {}",
-                    &dir, if create_parents {"(and respective parents)"} else {""}
+                    &dir,
+                    if create_parents {
+                        "(and respective parents)"
+                    } else {
+                        ""
+                    }
                 );
             } else {
                 println!("Cloning not successful");

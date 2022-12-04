@@ -1,6 +1,5 @@
 use serde::Deserialize;
 use serde_yaml::from_str;
-use std::fmt::Debug;
 use std::fs;
 use std::path::Path;
 
@@ -11,7 +10,7 @@ use crate::worship::Worship;
 use crate::psalms::{Psalm, PsalmOutput};
 use crate::psalms::yaml::YamlPsalm;
 
-#[derive(Debug, Deserialize)]
+#[derive(Deserialize)]
 #[serde(tag = "type")]
 
 pub enum PsalmContext {
@@ -26,20 +25,29 @@ fn invoke_psalm(psalm: &PsalmContext, worship: &Worship) -> Result<PsalmOutput, 
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Deserialize)]
 pub struct Sermon {
     psalms: Vec<PsalmContext>,
+
+    #[serde(skip_deserializing)]
+    outputs: Vec<PsalmOutput>
 }
 
 impl Sermon {
 
-    pub fn preach(&self, worship: &Worship) {
+    pub fn preach(mut self, worship: &Worship) {
 
-        self.psalms.iter().for_each(|psalm| {
-            
-            let res = invoke_psalm(psalm, worship);
-            print!("was ok: {}", res.is_ok())
+        self.psalms.iter().for_each(move |psalm| {
 
+            match invoke_psalm(psalm, worship) {
+                Ok(output) => {
+                    println!("psalm with id {} was successful", output.info.clone().unwrap().id.unwrap_or("unknown".to_owned()));
+                    self.outputs.push(output.clone());
+                },
+                Err(err) => {
+                    println!("psalm was not successful: {}", err);
+                }
+            };
         });
     }
 }
@@ -86,4 +94,5 @@ pub fn initialize(worship: &Worship) -> Result<Sermon, String> {
     fs::read_to_string(sermon_path)
         .map_err(|err| format!("Couldn't load sermon: {}", err))
         .and_then(|c| from_str(&c).map_err(|err| err.to_string()))
+        
 }

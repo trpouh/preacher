@@ -6,13 +6,16 @@ pub mod yaml;
 pub mod deacons;
 pub mod hello;
 
+#[derive(Clone)]
 pub struct PsalmOutput {
+
+    pub info: Option<PsalmInfo>,
     
     pub has_changed: bool
 
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Deserialize, Clone)]
 pub struct PsalmInfo {
 
     pub id: Option<String>,
@@ -21,8 +24,11 @@ pub struct PsalmInfo {
 }
 
 impl PsalmOutput {
-    pub fn empty() -> PsalmOutput {
-        PsalmOutput { has_changed: false }
+    pub fn empty(info: Option<PsalmInfo>) -> PsalmOutput {
+        PsalmOutput { 
+            info, 
+            has_changed: false 
+        }
     }
 }
 

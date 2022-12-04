@@ -8,20 +8,10 @@ mod worship;
 mod psalms;
 mod utils;
 
-use crate::sermon::initialize;
-use crate::worship::parse_args;
 use crate::psalms::Psalm;
 
-use worship::Worship;
+use worship::initiate_sermon_and_start_preaching;
 
 fn main() {
-
-    let worship: Worship = parse_args();
-
-    let _sermon = initialize(&worship);
-
-    match _sermon {
-        Ok(sermon) => sermon.preach(&worship),
-        Err(err) => println!("Hallelujah! Couldn't start preaching because of: {}", err)
-    }
+    initiate_sermon_and_start_preaching();
 }
