@@ -1,4 +1,5 @@
 psalms:
-  - type: Hello
-    id: hello_psalm
+- type: Hello
+  id: hello_psalm
+  name: John Doe
     
