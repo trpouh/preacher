@@ -4,21 +4,22 @@ use std::fmt::Debug;
 use std::fs;
 use std::path::Path;
 
-use crate::lib::io::{self, CopyOptions};
+use crate::utils::io::{self, CopyOptions};
 use crate::psalms::hello::HelloPsalm;
 use crate::worship::Worship;
 
-use crate::psalms::Psalm;
+use crate::psalms::{Psalm, PsalmOutput};
 use crate::psalms::yaml::YamlPsalm;
 
 #[derive(Debug, Deserialize)]
 #[serde(tag = "type")]
+
 pub enum PsalmContext {
     Yaml(crate::psalms::yaml::YamlContext),
     Hello(crate::psalms::hello::HelloContext)
 }
 
-fn invoke_psalm(psalm: &PsalmContext, worship: &Worship) -> Result<String,String> {
+fn invoke_psalm(psalm: &PsalmContext, worship: &Worship) -> Result<PsalmOutput, String> {
     match psalm {
         PsalmContext::Yaml(ctx) => YamlPsalm::invoke(ctx, worship),
         PsalmContext::Hello(ctx) => HelloPsalm::invoke(ctx, worship),

@@ -2,10 +2,10 @@ use serde::Deserialize;
 
 use crate::{Psalm, psalms::deacons::file::FileDeacon, worship::Worship};
 
-use super::deacons::file::FileDestination;
+use super::{deacons::file::FileDestination, PsalmOutput, PsalmMeta};
 
 #[cfg(test)]
-mod tests{
+mod tests {
 
     use super::YamlPsalm;
 
@@ -98,13 +98,15 @@ pub struct YamlContext {
 
 impl Psalm<YamlContext> for YamlPsalm {
 
-    fn invoke(context: &YamlContext, worship: &Worship) -> Result<String,String> {
+    fn invoke(context: &YamlContext, worship: &Worship) -> Result<PsalmOutput, String> {
 
         let file_deacon = FileDeacon::spawn(&context.file, worship);
 
         let contents = YamlPsalm::r#override(&file_deacon.load()?, &context.r#override, &context.path);
 
-        file_deacon.write(&contents)
+        file_deacon.write(&contents);
+
+        Ok(PsalmOutput::empty())
     }
 }
 

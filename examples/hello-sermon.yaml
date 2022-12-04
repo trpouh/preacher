@@ -1,2 +1,5 @@
 psalms:
   - type: Hello
+    info:
+      id: hello_psalm
+      name: 

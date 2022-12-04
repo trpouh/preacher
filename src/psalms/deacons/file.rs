@@ -36,7 +36,7 @@ impl<'a> FileDeacon<'a> {
 
         let _res = match file {
             Ok(path) => fs::write(path, contents),
-            Err(_) => todo!()
+            Err(_) => todo!(),
         };
 
         Ok(String::new())
@@ -54,10 +54,12 @@ impl<'a> FileDeacon<'a> {
     //TODO: split up
     fn check_prerequisites(&self) -> Result<PathBuf, String> {
         match &self.context {
+           
             FileDestination::Simple(name) => self
                 .load_file(name)
                 .map_err(|err| err.to_string())
                 .map(|_| get_real_path(self.worship, name)),
+
             FileDestination::Complex { name, create } => {
                 let _file = match self.load_file(name) {
                     Ok(file) => Ok(file),
