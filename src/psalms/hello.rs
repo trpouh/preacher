@@ -11,7 +11,7 @@ pub struct HelloContext {
 }
 
 impl Psalm<HelloContext> for HelloPsalm {
-    fn invoke(context: &HelloContext, worship: &crate::worship::Worship) -> Result<String,String> {
+    fn invoke(context: &HelloContext, _: &crate::worship::Worship) -> Result<String,String> {
 
         let name = context.name.clone();
 

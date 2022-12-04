@@ -1,4 +1,4 @@
-use std::process::{Command, ExitStatus};
+use std::process::Command;
 
 //TODO: Error handling
 pub fn clone_to_dir(repo: &str, target_dir: &str, branch: Option<&str>) {
@@ -44,7 +44,7 @@ pub fn copy_dir(copy_options: &CopyOptions) {
 
     let mut command = Command::new("rsync");
 
-    let source_dir = if copy_options.without_parent_folder.unwrap_or_else(|| false) {
+    let source_dir = if copy_options.without_parent_folder.unwrap_or(false) {
         format!("{}/.", copy_options.source_dir)
     } else {
         copy_options.source_dir.to_owned()

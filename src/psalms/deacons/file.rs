@@ -34,9 +34,9 @@ impl<'a> FileDeacon<'a> {
     pub fn write(&self, contents: &String) -> Result<String, String> {
         let file = self.check_prerequisites();
 
-        match file {
+        let _res = match file {
             Ok(path) => fs::write(path, contents),
-            Err(err) => todo!()
+            Err(_) => todo!()
         };
 
         Ok(String::new())
@@ -51,20 +51,21 @@ impl<'a> FileDeacon<'a> {
         }
     }
 
+    //TODO: split up
     fn check_prerequisites(&self) -> Result<PathBuf, String> {
-        let file = match &self.context {
+        match &self.context {
             FileDestination::Simple(name) => self
                 .load_file(name)
                 .map_err(|err| err.to_string())
-                .map(|_| get_real_path(&self.worship, name)),
+                .map(|_| get_real_path(self.worship, name)),
             FileDestination::Complex { name, create } => {
-                let file = match self.load_file(name) {
+                let _file = match self.load_file(name) {
                     Ok(file) => Ok(file),
                     Err(err) => {
                         if err.kind() == ErrorKind::NotFound && *create {
-                            return fs::File::create(get_real_path(&self.worship, name))
+                            return fs::File::create(get_real_path(self.worship, name))
                                 .map_err(|err| err.to_string())
-                                .map(|_| get_real_path(&self.worship, name));
+                                .map(|_| get_real_path(self.worship, name));
                         }
 
                         Err(err.to_string())
@@ -73,16 +74,14 @@ impl<'a> FileDeacon<'a> {
 
                 Err(String::new())
             }
-        };
-
-        file
+        }
     }
 
-    fn load_file(&self, file: &String) -> Result<File, std::io::Error> {
-        File::open(get_real_path(&self.worship, file))
+    fn load_file(&self, file: &str) -> Result<File, std::io::Error> {
+        File::open(get_real_path(self.worship, file))
     }
 }
 
 fn get_real_path(worship: &Worship, file_name: &str) -> PathBuf {
-    Path::new(&worship.target_folder).join(&file_name).to_owned()
+    Path::new(&worship.target_folder).join(file_name)
 }

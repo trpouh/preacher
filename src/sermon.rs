@@ -20,7 +20,7 @@ pub enum PsalmContext {
 
 fn invoke_psalm(psalm: &PsalmContext, worship: &Worship) -> Result<String,String> {
     match psalm {
-        PsalmContext::Yaml(ctx) => YamlPsalm::invoke(ctx, &worship),
+        PsalmContext::Yaml(ctx) => YamlPsalm::invoke(ctx, worship),
         PsalmContext::Hello(ctx) => HelloPsalm::invoke(ctx, worship),
     }
 }
@@ -36,7 +36,7 @@ impl Sermon {
 
         self.psalms.iter().for_each(|psalm| {
             
-            let res = invoke_psalm(&psalm, worship);
+            let res = invoke_psalm(psalm, worship);
             print!("was ok: {}", res.is_ok())
 
         });
@@ -49,18 +49,16 @@ pub fn initialize(worship: &Worship) -> Result<Sermon, String> {
 
     if let Some(repo) = &worship.repo {
         println!("Cloning git repo {} into folder {}", repo, tmp_dir);
-        io::create_dir(&tmp_dir, true);
-        io::clone_to_dir(repo, tmp_dir, worship.branch.as_ref().map(|x| &**x))
+        io::create_dir(tmp_dir, true);
+        io::clone_to_dir(repo, tmp_dir, worship.branch.as_deref())
         
     } else {
 
         let sermon_path = Path::new( &worship.source_folder )
-        .join(&worship.sermon)
-        .to_owned();
+        .join(&worship.sermon);
 
         //TODO: implement just file checking instead of loading
-        //TODO: same directory creates recursion
-        if let Ok(_) = fs::read_to_string(sermon_path) {
+        if fs::read_to_string(sermon_path).is_ok() {
             println!("Copying local folder {} into folder {}", worship.source_folder, tmp_dir);
             
             let copy_opts: CopyOptions = CopyOptions {
@@ -80,12 +78,11 @@ pub fn initialize(worship: &Worship) -> Result<Sermon, String> {
     }
 
     let sermon_path = Path::new(tmp_dir)
-        .join(&worship.sermon)
-        .to_owned();
+        .join(&worship.sermon);
 
     println!("Trying to load sermon from path: {}", sermon_path.display());
 
     fs::read_to_string(sermon_path)
-        .map_err(|err| format!("Couldn't load sermon: {}", err.to_string()))
+        .map_err(|err| format!("Couldn't load sermon: {}", err))
         .and_then(|c| from_str(&c).map_err(|err| err.to_string()))
 }

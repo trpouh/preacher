@@ -100,13 +100,11 @@ impl Psalm<YamlContext> for YamlPsalm {
 
     fn invoke(context: &YamlContext, worship: &Worship) -> Result<String,String> {
 
-        let file_deacon = FileDeacon::spawn(&context.file, &worship);
+        let file_deacon = FileDeacon::spawn(&context.file, worship);
 
         let contents = YamlPsalm::r#override(&file_deacon.load()?, &context.r#override, &context.path);
 
-        file_deacon.write(&contents);
-        
-        Ok("OK".to_owned())
+        file_deacon.write(&contents)
     }
 }
 
@@ -119,11 +117,11 @@ impl YamlPsalm {
         let parsed_appendix: Result<serde_yaml::Value, _> = serde_yaml::from_str(yaml_string);
 
         if let Err(err) = parsed_input {
-            println!("Error parsing yaml content: {}", err.to_string());
+            println!("Error parsing yaml content: {}", err);
             return contents.to_owned();
         }
 
-        let mut paths: Vec<&str> = path.split(".").collect();
+        let mut paths: Vec<&str> = path.split('.').collect();
 
         if paths.starts_with(&["$"]) {
             paths.remove(0);
@@ -131,7 +129,7 @@ impl YamlPsalm {
 
         let last = paths.pop();
 
-        if let None = last {
+        if last.is_none() {
             return yaml_string.to_owned();
         }
         
