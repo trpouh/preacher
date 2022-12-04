@@ -1,3 +1,5 @@
+use serde::Deserialize;
+
 use crate::worship::Worship;
 
 pub mod yaml;
@@ -10,9 +12,12 @@ pub struct PsalmOutput {
 
 }
 
-pub struct PsalmInfo<'a> {
-    pub id: Option<&'a str>,
-    pub name: Option<&'a str>
+#[derive(Debug, Deserialize, Clone)]
+pub struct PsalmInfo {
+
+    pub id: Option<String>,
+
+    pub name: Option<String>
 }
 
 impl PsalmOutput {

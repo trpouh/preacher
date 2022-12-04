@@ -1,3 +1,6 @@
+#[macro_use] extern crate serde;
+#[macro_use] extern crate psalmer;
+
 extern crate yaml_rust;
 
 mod sermon;

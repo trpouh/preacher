@@ -2,7 +2,7 @@ use serde::Deserialize;
 
 use crate::{Psalm, psalms::deacons::file::FileDeacon, worship::Worship};
 
-use super::{deacons::file::FileDestination, PsalmOutput, PsalmMeta};
+use super::{deacons::file::FileDestination, PsalmOutput, PsalmInfo};
 
 #[cfg(test)]
 mod tests {
