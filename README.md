@@ -1,6 +1,6 @@
 ## introduction
 
-preacher is a lightweight automation tool written in rust. to start working with preacher one should and understand know the concepts of a `worship`, `sermon` and `psalm`. 
+preacher is a lightweight automation tool written in rust. to start working with preacher one should know and understand the concepts of a `worship`, `sermon` and `psalm`. 
 
 | term    | definition
 |--       |--
