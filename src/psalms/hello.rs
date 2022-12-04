@@ -1,5 +1,6 @@
 use crate::psalms::PsalmInfo;
 use serde::Deserialize;
+#[macro_use] use serde;
 
 use super::{Psalm, PsalmOutput};
 
@@ -11,9 +12,6 @@ pub struct HelloPsalm { }
 pub struct HelloContext {
     name: Option<String>
 }
-
-#[psalmer::psalm]
-struct Test {}
 
 impl Psalm<HelloContext> for HelloPsalm {
     fn invoke(context: &HelloContext, _: &crate::worship::Worship) -> Result<PsalmOutput, String> {
