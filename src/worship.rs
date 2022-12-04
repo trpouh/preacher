@@ -19,7 +19,7 @@ pub struct Worship {
     #[arg(short, long, default_value_t = String::from("./"))]
     pub target_folder: String,
 
-    #[arg(long, default_value_t = String::from("~/.preacher/tmp"))]
+    #[arg(long, default_value_t = String::from(".preacher/tmp"))]
     pub tmp_dir: String,
 }
 

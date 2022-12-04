@@ -23,5 +23,5 @@ psalms:
   - type: Hello
 EOT
 
-echo "[preacher] start your first sermon with './preacher --tmp-dir ../tmp'"
+echo "[preacher] start your first sermon with './preacher'"
 

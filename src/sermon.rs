@@ -4,7 +4,7 @@ use std::fmt::Debug;
 use std::fs;
 use std::path::Path;
 
-use crate::lib::io;
+use crate::lib::io::{self, CopyOptions};
 use crate::psalms::hello::HelloPsalm;
 use crate::worship::Worship;
 
@@ -45,7 +45,7 @@ impl Sermon {
 
 pub fn initialize(worship: &Worship) -> Result<Sermon, String> {
 
-    let tmp_dir = &worship.tmp_dir;
+    let tmp_dir = worship.tmp_dir.as_str();
 
     if let Some(repo) = &worship.repo {
         println!("Cloning git repo {} into folder {}", repo, tmp_dir);
@@ -62,8 +62,17 @@ pub fn initialize(worship: &Worship) -> Result<Sermon, String> {
         //TODO: same directory creates recursion
         if let Ok(_) = fs::read_to_string(sermon_path) {
             println!("Copying local folder {} into folder {}", worship.source_folder, tmp_dir);
-            io::create_dir(&tmp_dir, true);
-            io::copy_all_files_to_dir(&worship.source_folder, tmp_dir);
+            
+            let copy_opts: CopyOptions = CopyOptions {
+                source_dir: &worship.source_folder,
+                target_dir: tmp_dir,
+                ensure_target_exists: Some(true),
+                exclude: Some([tmp_dir].to_vec()),
+                without_parent_folder: Some(true)
+            };
+            
+            io::copy_dir(&copy_opts);//&worship.source_folder, tmp_dir);
+
         } else {
             println!("Couldn't find sermon {} in local folder: {}", &worship.sermon, &worship.source_folder);
             return Err("No sermon found".to_string());

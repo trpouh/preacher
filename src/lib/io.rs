@@ -28,13 +28,33 @@ pub fn clone_to_dir(repo: &str, target_dir: &str, branch: Option<&str>) {
     }
 }
 
-pub fn copy_all_files_to_dir(source_dir: &str, target_dir: &str) {
-    copy_dir(&format!("{}/.", source_dir), &format!("{}/", target_dir));
+pub struct CopyOptions<'a> {
+    pub source_dir: &'a str,
+    pub target_dir: &'a str,
+    pub exclude: Option<Vec<&'a str>>,
+    pub without_parent_folder: Option<bool>,
+    pub ensure_target_exists: Option<bool>
 }
 
-pub fn copy_dir(source_dir: &str, target_dir: &str) {
-    let mut command = Command::new("cp");
-    command.arg("-r").arg(source_dir).arg(target_dir);
+pub fn copy_dir(copy_options: &CopyOptions) {
+
+    if copy_options.ensure_target_exists.unwrap_or(false) {
+        create_dir(copy_options.target_dir, true);
+    }
+
+    let mut command = Command::new("rsync");
+
+    let source_dir = if copy_options.without_parent_folder.unwrap_or_else(|| false) {
+        format!("{}/.", copy_options.source_dir)
+    } else {
+        copy_options.source_dir.to_owned()
+    };
+
+    copy_options.exclude.as_ref().unwrap_or(&Vec::default()).iter().for_each(|dir| {
+        command.args(["--exclude", dir]);
+    });
+
+    command.arg("-r").arg(&source_dir).arg(copy_options.target_dir);
 
     if let Ok(mut child) = command.spawn() {
         let exit_status = child.wait();
@@ -43,7 +63,7 @@ pub fn copy_dir(source_dir: &str, target_dir: &str) {
             if status.success() {
                 println!(
                     "Successfully copied source dir {} to dir: {} (Status: {})",
-                    source_dir, target_dir, status
+                    source_dir, copy_options.target_dir, status
                 );
             } else {
                 println!("Copying not successful");
