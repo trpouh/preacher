@@ -1,5 +1,5 @@
 #!/bin/zsh
-TAG=0.0.3
+TAG=0.0.4
 URL=https://github.com/trpouh/preacher/releases/download/${TAG}/preacher_${TAG}_x86_64-apple-darwin.zip
 
 echo "[preacher] installing preacher v${TAG} - amen!";
