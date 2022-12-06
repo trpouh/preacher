@@ -1,19 +1,18 @@
 ## The Preacher
 
-Preacher is a lightweight automation tool written in rust. to start working with preacher one should know and understand the concepts of a `worship`, `sermon` and `psalm`. 
+Preacher is a lightweight automation tool written in rust. To start working with preacher it is vital to know the concepts of `worship`, `sermon` and `psalm`. 
 
 | term    | definition
 |--       |--
 | worship | all neccessary information needed to deliver a `sermon` (aka preaching)
-| sermon  | contains a collection of `psalms` that shell be read
-| psalm   | subset of instructions
+| sermon  | contains a collection of `psalms` that shell be read and some extra information
+| psalm   | set of instructions
 
 Currently, the following platforms are supported:
 
 * x86_64-unknown-linux-musl
 * x86_64-apple-darwin
 
-### Motivation
 
 This project serves two functions:
 
@@ -22,7 +21,7 @@ This project serves two functions:
 
 ## Getting Started
 
-to download the binary see [releases](https://github.com/trpouh/preacher/releases) 
+To download the binary for your platform see [releases](https://github.com/trpouh/preacher/releases) 
 ### Windows
 
 Not yet!
@@ -41,7 +40,7 @@ If `zsh` is installed see [MacOS](#macos).
 
 ## Your first sermon
 
-the preacher requires a yaml file containing all psalms that shall be read. it can be as simple as that:
+The preacher requires a yaml file containing all psalms that shall be read. It can be as simple as that:
 
 ```yaml
 # sermon.yaml
@@ -51,7 +50,7 @@ psalms:
 
 ## Start the preaching
 
-upon installing and creating a sermon (see [your first sermon](#your-first-sermon)) the preacher can simply be invoked in your prefered terminal:
+Upon installing and creating a sermon (see [your first sermon](#your-first-sermon)) the preacher can simply be invoked in your prefered terminal:
 
 
 ```
@@ -76,7 +75,7 @@ which results in the following output (shortened for better readability):
 ```
 hey there stranger! congratulations to your first successful worship.
 
-psalm with id unknown was successful
+psalm with id n/a was successful: ok
 
 Cleanup finished. The worship is over.
 ```
@@ -95,7 +94,7 @@ resulting in the following output:
 ```
 hey there john doe! congratulations to your first successful worship.
 
-psalm with id hello_psalm was successful
+psalm with id hello_psalm was successful: ok
 
 Cleanup finished. The worship is over.
 ```
@@ -122,7 +121,9 @@ All psalms will then be _read_ in the order they are defined in. paths defined i
 
 ## Psalms
 
-Psalms are the heart of the preacher. They are defined as list items in the `sermon.yaml` file. Every psalm is defined in its own chapter, however psalms shares a couple of properties to allow for (future) logic:
+Psalms are the heart of every worship. They are defined in a list in the `sermon.yaml` file.
+
+Additionaly to their specific fields, psalms shares a couple of common properties that can be leveraged throughout the whole worship:
 
 ```yaml
 - type: <Generic-Psalm>
@@ -133,7 +134,7 @@ Psalms are the heart of the preacher. They are defined as list items in the `ser
 
 ### Deacons
 
-Deacons are datatypes to help standardize common processes. A file psalm that manipulates a file for example will always have to have a valid input path (see [File](#file).
+Deacons are datatypes to help standardize common processes. A file psalm that manipulates a file for example will always have to have a valid input path (see [File](#file)).
 
 #### File
 
