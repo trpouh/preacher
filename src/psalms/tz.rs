@@ -20,7 +20,7 @@ impl TzPsalm {
     fn set_timezone(tz: &str) -> Result<String, String> {
 
         let mut command = Command::new("timedatectl");
-        command.args(["set-timezone", tz]);
+        command.args(["set-timezone", tz, "--no-ask-password"]);
 
         let child = command.spawn().and_then(|c| {
 
