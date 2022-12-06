@@ -1,0 +1,3 @@
+psalms:
+- type: Debug
+  fail: true

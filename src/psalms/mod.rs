@@ -7,6 +7,7 @@ pub mod deacons;
 pub mod yaml;
 pub mod hello;
 pub mod tz;
+pub mod debug;
 
 #[derive(Clone)]
 pub struct PsalmOutput {

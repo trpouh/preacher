@@ -3,6 +3,7 @@ use serde_yaml::from_str;
 use std::fs;
 use std::path::Path;
 
+use crate::psalms::debug::DebugPsalm;
 use crate::psalms::tz::TzPsalm;
 use crate::utils::io::{self, CopyOptions};
 use crate::psalms::hello::HelloPsalm;
@@ -17,13 +18,15 @@ pub enum PsalmContext {
     Hello(crate::psalms::hello::HelloContext),
     Yaml(crate::psalms::yaml::YamlContext),
     Timezone(crate::psalms::tz::TzContext),
+    Debug(crate::psalms::debug::DebugContext)
 }
 
 fn invoke_psalm(psalm: &PsalmContext, worship: &Worship) -> PsalmOutput {
     match psalm {
         PsalmContext::Hello(ctx) => HelloPsalm::invoke(ctx, worship),
         PsalmContext::Yaml(ctx) => YamlPsalm::invoke(ctx, worship),
-        PsalmContext::Timezone(ctx) => TzPsalm::invoke(ctx, worship)
+        PsalmContext::Timezone(ctx) => TzPsalm::invoke(ctx, worship),
+        PsalmContext::Debug(ctx) => DebugPsalm::invoke(ctx, worship)
     }
 }
 

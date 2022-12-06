@@ -1,6 +1,6 @@
-use std::process::Command;
+use std::process::{Command, ExitStatus};
 
-use crate::psalms::PsalmInfo;
+use crate::{psalms::PsalmInfo, utils::cmd::spawn_and_map_to_res};
 use serde::Deserialize;
 
 use super::{Psalm, PsalmOutput};
@@ -19,20 +19,11 @@ pub struct TzContext {
 impl TzPsalm {
     fn set_timezone(tz: &str) -> Result<String, String> {
 
+
         let mut command = Command::new("timedatectl");
         command.args(["set-timezone", tz, "--no-ask-password"]);
-
-        let child = command.spawn().and_then(|c| {
-
-            c.wait_with_output()
-                .map(|out| String::from_utf8(out.stdout).expect("command successful; no output"))
-
-
-        }).map_err(|err|{
-            err.to_string()
-        });
-
-        child
+        
+        spawn_and_map_to_res(&mut command)
     }
 }
 
