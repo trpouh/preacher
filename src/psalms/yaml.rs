@@ -1,8 +1,8 @@
 use serde::Deserialize;
 
-use crate::{Psalm, psalms::deacons::file::FileDeacon, worship::Worship};
+use crate::{psalms::deacons::file::FileDeacon, worship::Worship, Psalm};
 
-use super::{deacons::file::FileDestination, PsalmOutput, PsalmInfo};
+use super::{deacons::file::FileDestination, PsalmInfo, PsalmOutput};
 
 #[cfg(test)]
 mod tests {
@@ -11,7 +11,6 @@ mod tests {
 
     #[test]
     fn override_root() {
-
         let source = r#"
             foo: bar
         "#;
@@ -26,7 +25,6 @@ mod tests {
 
     #[test]
     fn override_sub() {
-
         let source = r#"
 foo: bar
 obj: test"#;
@@ -47,7 +45,6 @@ obj:
 
     #[test]
     fn override_nested() {
-
         let source = r#"
 foo:
   bar: a
@@ -70,7 +67,6 @@ obj: test
 
     #[test]
     fn create_new() {
-
         let source = r#"a: b"#;
 
         let target = r#"[a,b]"#;
@@ -84,7 +80,6 @@ list:
         let result = YamlPsalm::r#override(source, target, "$.list");
         assert_eq!(result, expected);
     }
-
 }
 
 #[psalmer::psalm_context]
@@ -93,21 +88,21 @@ pub struct YamlContext {
     file: FileDestination,
 
     path: String,
-    
-    r#override: String
+
+    r#override: String,
 }
 
 impl Psalm<YamlContext> for YamlPsalm {
-
-    fn invoke(context: &YamlContext, worship: &Worship) -> Result<PsalmOutput, String> {
+    fn invoke(context: &YamlContext, worship: &Worship) -> PsalmOutput {
 
         let file_deacon = FileDeacon::spawn(&context.file, worship);
 
-        let contents = YamlPsalm::r#override(&file_deacon.load()?, &context.r#override, &context.path);
+        let result = file_deacon
+            .load()
+            .map(|contents| YamlPsalm::r#override(&contents, &context.r#override, &context.path))
+            .and_then(|contents| file_deacon.write(&contents));
 
-        file_deacon.write(&contents);
-
-        Ok(PsalmOutput::empty(context.info.clone()))
+        PsalmOutput::simple_from_result(context.info.clone(), result)
     }
 }
 
@@ -115,7 +110,6 @@ pub struct YamlPsalm {}
 
 impl YamlPsalm {
     fn r#override(contents: &str, yaml_string: &str, path: &str) -> String {
-
         let parsed_input: Result<serde_yaml::Value, _> = serde_yaml::from_str(contents);
         let parsed_appendix: Result<serde_yaml::Value, _> = serde_yaml::from_str(yaml_string);
 
@@ -135,7 +129,7 @@ impl YamlPsalm {
         if last.is_none() {
             return yaml_string.to_owned();
         }
-        
+
         let mut root = parsed_input.unwrap();
         let mut current_value = &mut root;
 
@@ -143,12 +137,8 @@ impl YamlPsalm {
             let numeric_sub = sub_path.parse::<usize>();
 
             match numeric_sub {
-                Ok(index) => {
-                    current_value = &mut current_value[index]
-                },
-                Err(_) => {
-                    current_value = &mut current_value[sub_path]
-                }
+                Ok(index) => current_value = &mut current_value[index],
+                Err(_) => current_value = &mut current_value[sub_path],
             };
 
             println!("current value: {:?}", current_value);
@@ -156,6 +146,5 @@ impl YamlPsalm {
 
         current_value[last.unwrap()] = parsed_appendix.unwrap();
         serde_yaml::to_string(&root).unwrap()
-
     }
 }

@@ -1,3 +1,21 @@
+Table of Contents
+
+- [introduction](#introduction)
+  - [motivation](#motivation)
+- [getting started](#getting-started)
+  - [Windows](#windows)
+  - [MacOS](#macos)
+  - [Linux](#linux)
+- [your first sermon](#your-first-sermon)
+- [start preaching](#start-preaching)
+- [psalms](#psalms)
+  - [deacons](#deacons)
+    - [File](#file)
+  - [Hello](#hello)
+  - [Timezone](#timezone)
+  - [Yaml](#yaml)
+
+
 ## introduction
 
 preacher is a lightweight automation tool written in rust. to start working with preacher one should know and understand the concepts of a `worship`, `sermon` and `psalm`. 
@@ -51,7 +69,7 @@ psalms:
 
 ## start preaching
 
-upon installing and creating a sermon (see [your first sermon](#your_first_sermon)) the preacher can simply be invoked in your prefered terminal:
+upon installing and creating a sermon (see [your first sermon](#your-first-sermon)) the preacher can simply be invoked in your prefered terminal:
 
 
 ```
@@ -99,22 +117,119 @@ psalm with id hello_psalm was successful
 
 Cleanup finished. The worship is over.
 ```
+
+> Did you know? 
+
+You can initiate a sermon with the hello psalm directly from this repository! Just provide it when starting preacher:
+
+
+```bash
+$> ./preacher --repo https://github.com/trpouh/preacher --branch wip --sermon examples/hello-sermon.yaml
+```
+
+<!---
 ## what exactly happend now?
 
 Upon invoking, the preacher looks for the sermon as provided by the user. In the first example we did not provide a sermon via `-s` so the default `sermon.yaml` was used. 
 
 The whole folder in which the sermon resides will be copied into a temporary directory. A sermon can also be downloaded from a git repository, to use e.g. the sermon in this repository invoke the preacher like this:
 
-```
-$> ./preacher --repo https://github.com/trpouh/preacher --branch wip --sermon examples/hello-sermon.yaml
-```
-
 All psalms will then be _read_ in the order they are defined in. paths defined in psalms (to e.g. delete/create files) will be relative to `target-folder` (default: `.`).
 
+--->
 
 ## psalms
 
-Currently the following psalms are implemented:
+Psalms are the heart of the preacher. They are defined as list items in the `sermon.yaml` file. Every psalm is defined in its own chapter, however psalms shares a couple of properties to allow for (future) logic:
+
+```yaml
+- type: <Generic-Psalm>
+  # optional, useful when you want to implement
+  # logic -> start only when x was successful
+  id: String
+```
+
+### deacons
+
+Deacons are datatypes to help standardize common processes. A file psalm that manipulates a file for example will always have to have a valid input path (see [File](#file).
+
+#### File
+
+There are two ways define a file. The simple on is by providing just a filename: 
+
+```yaml
+field: String
+```
+
+If you want to provide more settings, there is also the `complex` option:
+
+```yaml
+field:
+  # required
+  name: String
+  # optional; default: false
+  create: boolean 
+```
+
+### Hello
+
+hello world to verify a successful installation of _the preacher_
+
+```yaml
+- type: Hello
+  # optional
+  name: String
+```
+
+### Timezone
+
+change the timezone by leveraging `datetimectl`
+
+```yaml
+- type: Timezone
+  # timezone as defined in the tz database
+  # see: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  # example: Austria/Vienna
+  tz: String
+```
+
+### Yaml
+
+manipulate the yaml content of a file (see [File](#file)). it will override the object provided via the path. If you set the path `$` it will override the whole file.
+
+```yaml
+- type: Yaml
+  file: File
+  # can be inline, multiline, whatever
+  override: String
+  # simplified version of a json path
+  # optional; default: $
+  path: String
+```
+
+example (add a child to the root object):
+
+```yaml
+- type: Yaml
+  file: "my-file.yaml"
+  override: |
+    name: John Doe
+    age: 25
+  path: "$.participant"
+```
+
+will result in:
+
+```yaml
+# my-file.yaml (before)
+foo: "bar"
+
+# my-file.yaml (after)
+foo: "bar"
+participant:
+  name: "John Doe"
+  age: "25"
+```
 
 
 <!---

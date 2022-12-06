@@ -3,6 +3,7 @@ use serde_yaml::from_str;
 use std::fs;
 use std::path::Path;
 
+use crate::psalms::tz::TzPsalm;
 use crate::utils::io::{self, CopyOptions};
 use crate::psalms::hello::HelloPsalm;
 use crate::worship::Worship;
@@ -12,16 +13,17 @@ use crate::psalms::yaml::YamlPsalm;
 
 #[derive(Deserialize)]
 #[serde(tag = "type")]
-
 pub enum PsalmContext {
+    Hello(crate::psalms::hello::HelloContext),
     Yaml(crate::psalms::yaml::YamlContext),
-    Hello(crate::psalms::hello::HelloContext)
+    Timezone(crate::psalms::tz::TzContext),
 }
 
-fn invoke_psalm(psalm: &PsalmContext, worship: &Worship) -> Result<PsalmOutput, String> {
+fn invoke_psalm(psalm: &PsalmContext, worship: &Worship) -> PsalmOutput {
     match psalm {
-        PsalmContext::Yaml(ctx) => YamlPsalm::invoke(ctx, worship),
         PsalmContext::Hello(ctx) => HelloPsalm::invoke(ctx, worship),
+        PsalmContext::Yaml(ctx) => YamlPsalm::invoke(ctx, worship),
+        PsalmContext::Timezone(ctx) => TzPsalm::invoke(ctx, worship)
     }
 }
 
@@ -39,15 +41,17 @@ impl Sermon {
 
         self.psalms.iter().for_each(move |psalm| {
 
-            match invoke_psalm(psalm, worship) {
-                Ok(output) => {
-                    println!("psalm with id {} was successful", output.info.clone().unwrap().id.unwrap_or("unknown".to_owned()));
-                    self.outputs.push(output.clone());
-                },
-                Err(err) => {
-                    println!("psalm was not successful: {}", err);
-                }
+            let invocation_output = invoke_psalm(psalm, worship);
+            let psalm_info = invocation_output.info.clone().unwrap_or_default();
+
+            let id = psalm_info.id.unwrap_or("n/a".to_owned());
+
+            match &invocation_output.result {
+                Ok(output) => println!("psalm with id {} was successful: {}", &id, output),
+                Err(err) => println!("psalm with id {} was not successful: {}", &id, err)
             };
+
+            self.outputs.push(invocation_output.clone());
         });
     }
 }
@@ -74,7 +78,7 @@ pub fn initialize(worship: &Worship) -> Result<Sermon, String> {
                 source_dir: &worship.source_folder,
                 target_dir: tmp_dir,
                 ensure_target_exists: Some(true),
-                exclude: Some([tmp_dir].to_vec()),
+                exclude: Some([tmp_dir, "preacher"].to_vec()),
                 without_parent_folder: Some(true)
             };
             
