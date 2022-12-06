@@ -1,22 +1,6 @@
-- [introduction](#introduction)
-  - [motivation](#motivation)
-- [getting started](#getting-started)
-  - [Windows](#windows)
-  - [MacOS](#macos)
-  - [Linux](#linux)
-- [your first sermon](#your-first-sermon)
-- [start preaching](#start-preaching)
-- [psalms](#psalms)
-  - [deacons](#deacons)
-    - [File](#file)
-  - [Hello](#hello)
-  - [Timezone](#timezone)
-  - [Yaml](#yaml)
+## The Preacher
 
-
-## introduction
-
-preacher is a lightweight automation tool written in rust. to start working with preacher one should know and understand the concepts of a `worship`, `sermon` and `psalm`. 
+Preacher is a lightweight automation tool written in rust. to start working with preacher one should know and understand the concepts of a `worship`, `sermon` and `psalm`. 
 
 | term    | definition
 |--       |--
@@ -29,14 +13,14 @@ Currently, the following platforms are supported:
 * x86_64-unknown-linux-musl
 * x86_64-apple-darwin
 
-### motivation
+### Motivation
 
 This project serves two functions:
 
 * (mainly) teach me rust
 * provide a lightweight alternative to ansible(-pull) that can easily run on embedded devices
 
-## getting started
+## Getting Started
 
 to download the binary see [releases](https://github.com/trpouh/preacher/releases) 
 ### Windows
@@ -55,7 +39,7 @@ curl -s -L https://raw.githubusercontent.com/trpouh/preacher/wip/kickstarter/ins
 
 If `zsh` is installed see [MacOS](#macos).
 
-## your first sermon
+## Your first sermon
 
 the preacher requires a yaml file containing all psalms that shall be read. it can be as simple as that:
 
@@ -65,7 +49,7 @@ psalms:
 - type: Hello
 ```
 
-## start preaching
+## Start the preaching
 
 upon installing and creating a sermon (see [your first sermon](#your-first-sermon)) the preacher can simply be invoked in your prefered terminal:
 
@@ -136,7 +120,7 @@ All psalms will then be _read_ in the order they are defined in. paths defined i
 
 --->
 
-## psalms
+## Psalms
 
 Psalms are the heart of the preacher. They are defined as list items in the `sermon.yaml` file. Every psalm is defined in its own chapter, however psalms shares a couple of properties to allow for (future) logic:
 
@@ -147,7 +131,7 @@ Psalms are the heart of the preacher. They are defined as list items in the `ser
   id: String
 ```
 
-### deacons
+### Deacons
 
 Deacons are datatypes to help standardize common processes. A file psalm that manipulates a file for example will always have to have a valid input path (see [File](#file).
 

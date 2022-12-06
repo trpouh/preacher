@@ -1,5 +1,5 @@
-#[macro_use] extern crate serde;
-#[macro_use] extern crate psalmer;
+extern crate serde;
+extern crate psalmer;
 
 extern crate yaml_rust;
 
