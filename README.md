@@ -1,5 +1,3 @@
-Table of Contents
-
 - [introduction](#introduction)
   - [motivation](#motivation)
 - [getting started](#getting-started)
@@ -183,7 +181,7 @@ hello world to verify a successful installation of _the preacher_
 
 ### Timezone
 
-change the timezone by leveraging `datetimectl`
+change the timezone by leveraging `datetimectl` (needs `sudo`)
 
 ```yaml
 - type: Timezone

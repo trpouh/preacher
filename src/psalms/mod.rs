@@ -19,9 +19,9 @@ pub struct PsalmOutput {
 
 }
 
-pub struct InvocationOutput {
+/*pub struct InvocationOutput {
     pub message: Result<String,String>
-}
+}*/
 
 #[derive(Default, Deserialize, Clone)]
 pub struct PsalmInfo {
