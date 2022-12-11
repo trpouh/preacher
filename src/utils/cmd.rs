@@ -2,7 +2,7 @@ use std::process::Command;
 
 #[cfg(test)]
 mod tests {
-    use std::{process::{Command, Stdio}, io::stdin};
+    use std::process::Command;
 
     use super::spawn_and_map_to_res;
 

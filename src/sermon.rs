@@ -45,7 +45,7 @@ impl Sermon {
         self.psalms.iter().for_each(move |psalm| {
 
             let invocation_output = invoke_psalm(psalm, worship);
-            let psalm_info = invocation_output.info.clone().unwrap_or_default();
+            let psalm_info = invocation_output.info.clone();
 
             let id = psalm_info.id.unwrap_or("n/a".to_owned());
 
@@ -61,12 +61,13 @@ impl Sermon {
 
 pub fn initialize(worship: &Worship) -> Result<Sermon, String> {
 
-    let tmp_dir = worship.tmp_dir.as_str();
+    //TODO: put copy logic into worship
+    let worship_dir = worship.worship_dir.as_str();
 
     if let Some(repo) = &worship.repo {
-        println!("Cloning git repo {} into folder {}", repo, tmp_dir);
-        io::create_dir(tmp_dir, true);
-        io::clone_to_dir(repo, tmp_dir, worship.branch.as_deref())
+        println!("Cloning git repo {} into folder {}", repo, worship_dir);
+        io::create_dir(worship_dir, true);
+        io::clone_to_dir(repo, worship_dir, worship.branch.as_deref())
         
     } else {
 
@@ -75,17 +76,17 @@ pub fn initialize(worship: &Worship) -> Result<Sermon, String> {
 
         //TODO: implement just file checking instead of loading
         if fs::read_to_string(sermon_path).is_ok() {
-            println!("Copying local folder {} into folder {}", worship.source_folder, tmp_dir);
+            println!("Copying local folder {} into folder {}", worship.source_folder, worship_dir);
             
             let copy_opts: CopyOptions = CopyOptions {
                 source_dir: &worship.source_folder,
-                target_dir: tmp_dir,
+                target_dir: worship_dir,
                 ensure_target_exists: Some(true),
-                exclude: Some([tmp_dir, "preacher"].to_vec()),
+                exclude: Some([worship_dir, "preacher"].to_vec()),
                 without_parent_folder: Some(true)
             };
             
-            io::copy_dir(&copy_opts);//&worship.source_folder, tmp_dir);
+            io::copy_dir(&copy_opts);//&worship.source_folder, worship_dir);
 
         } else {
             println!("Couldn't find sermon {} in local folder: {}", &worship.sermon, &worship.source_folder);
@@ -93,7 +94,7 @@ pub fn initialize(worship: &Worship) -> Result<Sermon, String> {
         }
     }
 
-    let sermon_path = Path::new(tmp_dir)
+    let sermon_path = Path::new(worship_dir)
         .join(&worship.sermon);
 
     println!("Trying to load sermon from path: {}", sermon_path.display());

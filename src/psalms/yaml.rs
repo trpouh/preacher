@@ -1,8 +1,89 @@
 use serde::Deserialize;
 
-use crate::{psalms::deacons::file::FileDeacon, worship::Worship, Psalm};
+use crate::{psalms::deacons::file::destination::FileDeacon, worship::Worship, Psalm};
 
-use super::{deacons::file::FileDestination, PsalmInfo, PsalmOutput};
+use super::{deacons::file::destination::FileDestination, PsalmInfo, PsalmOutput};
+
+#[psalmer::psalm_context]
+#[derive(Deserialize)]
+pub struct YamlContext {
+    file: FileDestination,
+
+    path: String,
+
+    r#override: String,
+}
+
+impl Psalm<YamlContext> for YamlPsalm {
+    fn invoke(context: &YamlContext, worship: &Worship) -> PsalmOutput {
+        
+        let file_deacon = FileDeacon::new(&context.file, worship);
+
+        match file_deacon {
+            Ok(deacon) => {
+
+                let map_yaml = |c: String| YamlPsalm::r#override(&c, &context.r#override, &context.path);
+
+                let result = std::fs::read_to_string(deacon.path())
+                    .map_err(|err| err.to_string())
+                    .map(map_yaml)
+                    .and_then(|contents| deacon.write(&contents));
+
+                PsalmOutput::simple_from_result(context.info.clone(), result)
+            }
+            Err(err) => PsalmOutput::failed(context.info.clone(), err),
+        }
+    }
+}
+
+pub struct YamlPsalm {}
+
+impl YamlPsalm {
+    fn r#override(contents: &str, yaml_string: &str, path: &str) -> String {
+        
+        let parsed_input = if contents.is_empty() {
+            Ok(serde_yaml::Value::default())
+        } else {
+            serde_yaml::from_str(contents)
+        };
+
+        let parsed_appendix: Result<serde_yaml::Value, _> = serde_yaml::from_str(yaml_string);
+
+        if let Err(err) = parsed_input {
+            println!("Error parsing yaml content: {}", err);
+            return contents.to_owned();
+        }
+
+        let mut paths: Vec<&str> = path.split('.').collect();
+
+        if paths.starts_with(&["$"]) {
+            paths.remove(0);
+        }
+
+        let last = paths.pop();
+
+        if last.is_none() {
+            return yaml_string.to_owned();
+        }
+
+        let mut root = parsed_input.unwrap();
+        let mut current_value = &mut root;
+
+        for sub_path in paths {
+            let numeric_sub = sub_path.parse::<usize>();
+
+            match numeric_sub {
+                Ok(index) => current_value = &mut current_value[index],
+                Err(_) => current_value = &mut current_value[sub_path],
+            };
+
+            println!("current value: {:?}", current_value);
+        }
+
+        current_value[last.unwrap()] = parsed_appendix.unwrap();
+        serde_yaml::to_string(&root).unwrap()
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -80,71 +161,19 @@ list:
         let result = YamlPsalm::r#override(source, target, "$.list");
         assert_eq!(result, expected);
     }
-}
 
-#[psalmer::psalm_context]
-#[derive(Deserialize)]
-pub struct YamlContext {
-    file: FileDestination,
+    #[test]
+    fn empty_source() {
+        let source = "";
 
-    path: String,
+        let target = r#"[a,b]"#;
 
-    r#override: String,
-}
+        let expected = r#"list:
+- a
+- b
+"#;
 
-impl Psalm<YamlContext> for YamlPsalm {
-    fn invoke(context: &YamlContext, worship: &Worship) -> PsalmOutput {
-
-        let file_deacon = FileDeacon::spawn(&context.file, worship);
-
-        let result = file_deacon
-            .load()
-            .map(|contents| YamlPsalm::r#override(&contents, &context.r#override, &context.path))
-            .and_then(|contents| file_deacon.write(&contents));
-
-        PsalmOutput::simple_from_result(context.info.clone(), result)
-    }
-}
-
-pub struct YamlPsalm {}
-
-impl YamlPsalm {
-    fn r#override(contents: &str, yaml_string: &str, path: &str) -> String {
-        let parsed_input: Result<serde_yaml::Value, _> = serde_yaml::from_str(contents);
-        let parsed_appendix: Result<serde_yaml::Value, _> = serde_yaml::from_str(yaml_string);
-
-        if let Err(err) = parsed_input {
-            println!("Error parsing yaml content: {}", err);
-            return contents.to_owned();
-        }
-
-        let mut paths: Vec<&str> = path.split('.').collect();
-
-        if paths.starts_with(&["$"]) {
-            paths.remove(0);
-        }
-
-        let last = paths.pop();
-
-        if last.is_none() {
-            return yaml_string.to_owned();
-        }
-
-        let mut root = parsed_input.unwrap();
-        let mut current_value = &mut root;
-
-        for sub_path in paths {
-            let numeric_sub = sub_path.parse::<usize>();
-
-            match numeric_sub {
-                Ok(index) => current_value = &mut current_value[index],
-                Err(_) => current_value = &mut current_value[sub_path],
-            };
-
-            println!("current value: {:?}", current_value);
-        }
-
-        current_value[last.unwrap()] = parsed_appendix.unwrap();
-        serde_yaml::to_string(&root).unwrap()
+        let result = YamlPsalm::r#override(source, target, "$.list");
+        assert_eq!(result, expected);
     }
 }

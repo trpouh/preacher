@@ -11,11 +11,13 @@ pub fn psalm_context(_: TokenStream, input: TokenStream) -> TokenStream {
 
     // println!("args: {:#?}", item_struct);
 
+    //TODO: parametrize PsalmInfo
+
     if let syn::Fields::Named(ref mut fields) = item_struct.fields {
         let field = syn::Field::parse_named
             .parse2(quote! {
                 #[serde(flatten)]
-                pub info: Option<PsalmInfo>
+                pub info: PsalmInfo
             })
             .unwrap();
         /*

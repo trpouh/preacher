@@ -63,7 +63,7 @@ Options:
       --source-folder <SOURCE_FOLDER>  [default: ./]
   -s, --sermon <SERMON>                [default: sermon.yaml]
   -t, --target-folder <TARGET_FOLDER>  [default: ./]
-      --tmp-dir <TMP_DIR>              [default: .preacher/tmp]
+      --worship-dir <worship_dir>         [default: .preacher/tmp]
   -h, --help                           Print help information
   -V, --version                        Print version information
 

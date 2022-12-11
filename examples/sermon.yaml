@@ -4,8 +4,12 @@ psalms:
 #      is_obj: true
 #    path: "$.foo.bar"
 #    file: "files/my-yaml.yaml"
-#  - type: Yaml
-#    override: "[a.js, b.js]"
-#    path: "$.devices"
-#    file: "files/my-yaml.yaml"
-  - type: Hello 
+  - type: Yaml
+    name: test
+    id: yaml_test
+    override: "[a.js, b.js, c.js]"
+    path: "$.devices"
+    file: 
+      path: "files/my-yaml-2.yaml"
+      create: true
+#  - type: Hello 
