@@ -118,7 +118,6 @@ They have simple structure:
 ```yaml
 - type: String
   id: Optional<String>
-  name: Optional<String>
 ```
 
 * `type` defines its purpose.
@@ -236,7 +235,7 @@ field:
 There are multiple ways to define a file destination. The simple on is by providing just a filename: 
 
 ```yaml
-# fill fail if the target file does not exist
+# will fail if the target file does not exist
 field: String
 ```
 
@@ -251,4 +250,3 @@ field:
   # optional; default: false
   create_parents: boolean
 ```
-

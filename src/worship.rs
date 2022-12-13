@@ -36,11 +36,11 @@ pub fn initiate_sermon_and_start_preaching () {
     
     match sermon::initialize(&worship) {
         Ok(sermon) => sermon.preach(&worship),
-        Err(err) => println!("Hallelujah! Couldn't start preaching because of: {}", err)
+        Err(err) => error!("Hallelujah! Couldn't start preaching because of: {}", err)
     }
 
     if let Ok(_) = std::fs::remove_dir_all(worship.worship_dir) {
-        println!("Cleanup finished. The worship is over.");
+        info!("Cleanup finished. The worship is over.");
     }
 
 }

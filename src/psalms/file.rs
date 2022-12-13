@@ -46,8 +46,8 @@ impl Psalm<FileContext> for FilePsalm {
         let d = file_destination.unwrap();
         let destination_path = d.path();
 
-        std::fs::copy(source_path, destination_path);
+        let result = std::fs::copy(source_path, destination_path).map_err(|err|err.to_string()).map(|_| "copy was OK".to_owned());
 
-        PsalmOutput::simple_from_result(context.info.clone(), Ok("ok".to_owned()))
+        PsalmOutput::simple_from_result(context.info.clone(),result)
     }
 }

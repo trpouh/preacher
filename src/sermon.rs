@@ -13,6 +13,8 @@ use crate::worship::Worship;
 use crate::psalms::yaml::YamlPsalm;
 use crate::psalms::{Psalm, PsalmOutput};
 
+use log::debug;
+
 #[derive(Deserialize)]
 #[serde(tag = "type")]
 pub enum PsalmContext {
@@ -51,8 +53,8 @@ impl Sermon {
             let id = psalm_info.id.unwrap_or("n/a".to_owned());
 
             match &invocation_output.result {
-                Ok(output) => println!("psalm with id {} was successful: {}", &id, output),
-                Err(err) => println!("psalm with id {} was not successful: {}", &id, err),
+                Ok(output) => info!("psalm with id {} was successful: {}", &id, output),
+                Err(err) => error!("psalm with id {} was not successful: {}", &id, err),
             };
 
             self.outputs.push(invocation_output.clone());
@@ -65,7 +67,7 @@ pub fn initialize(worship: &Worship) -> Result<Sermon, String> {
     let worship_dir = worship.worship_dir.as_str();
 
     if let Some(repo) = &worship.repo {
-        println!("Cloning git repo {} into folder {}", repo, worship_dir);
+        info!("Cloning git repo {} into folder {}", repo, worship_dir);
         io::create_dir(worship_dir, true);
         io::clone_to_dir(repo, worship_dir, worship.branch.as_deref())
     } else {
@@ -73,9 +75,10 @@ pub fn initialize(worship: &Worship) -> Result<Sermon, String> {
 
         //TODO: implement just file checking instead of loading
         if fs::read_to_string(sermon_path).is_ok() {
-            println!(
+            debug!(
                 "Copying local folder {} into folder {}",
-                worship.source_folder, worship_dir
+                worship.source_folder,
+                worship_dir
             );
 
             let copy_opts: CopyOptions = CopyOptions {
@@ -88,17 +91,18 @@ pub fn initialize(worship: &Worship) -> Result<Sermon, String> {
 
             io::copy_dir(&copy_opts); //&worship.source_folder, worship_dir);
         } else {
-            println!(
-                "Couldn't find sermon {} in local folder: {}",
-                &worship.sermon, &worship.source_folder
-            );
-            return Err("No sermon found".to_string());
+
+            let error_message = format!(
+                "No sermon found under {}/{}",
+                &worship.sermon, &worship.source_folder);
+
+            return Err(error_message);
         }
     }
 
     let sermon_path = Path::new(worship_dir).join(&worship.sermon);
 
-    println!("Trying to load sermon from path: {}", sermon_path.display());
+    debug!("Trying to load sermon from path: {}", sermon_path.display());
 
     fs::read_to_string(sermon_path)
         .map_err(|err| format!("Couldn't load sermon: {}", err))
