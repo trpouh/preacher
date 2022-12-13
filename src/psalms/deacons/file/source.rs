@@ -15,47 +15,43 @@ pub enum FileSource {
         url: String,
     },
     Git {
-        git_url: String,
+        repo: String,
+        path: String,
         branch: Option<bool>,
     },
 }
 
 impl FileSource {
-    pub fn to_deacon<'a>(&'a self, worship: &'a Worship) -> FileSourceDeacon {
+    pub fn to_deacon<'a>(&'a self, worship: &'a Worship) -> Result<FileSourceDeacon, String> {
         FileSourceDeacon::new(self, worship)
     }
 }
-pub struct FileSourceDeacon<'a> {
+pub struct FileSourceDeacon {
     path: PathBuf,
-    worship: &'a Worship, //TODO: maybe remove? doesn't seem necessary
 }
 
-impl<'a> FileSourceDeacon<'a> {
-    fn new(source: &'a FileSource, worship: &'a Worship) -> FileSourceDeacon<'a> {
+impl FileSourceDeacon {
+    fn new<'a>(source: &'a FileSource, worship: &'a Worship) -> Result<FileSourceDeacon, String> {
         //TODO: clean a bit up
-        let path = match source {
+        let path: Result<PathBuf, String> = match source {
             FileSource::Http { url: _ } => todo!("should download file to local disk"),
             FileSource::Git {
-                git_url: _,
+                repo: _,
                 branch: _,
+                path: _,
             } => todo!("should download file to local disk"),
-            FileSource::Simple(path) => Path::new(&worship.target_folder).join(path),
+            FileSource::Simple(path) => Ok(Path::new(&worship.target_folder).join(path)),
             FileSource::Complex { path, in_worship } => {
                 let root = if in_worship.unwrap_or(false) {
                     &worship.worship_dir
                 } else {
                     &worship.target_folder
                 };
-                Path::new(&root).join(path)
+                Ok(Path::new(&root).join(path))
             }
         };
 
-        let instance = FileSourceDeacon {
-            worship: worship,
-            path,
-        };
-
-        instance
+        path.map(|_path| FileSourceDeacon { path: _path })
     }
 
     pub fn get_path(&self) -> &PathBuf {
@@ -88,7 +84,7 @@ mod tests {
 
             let expected = Path::new("/test").join("file.txt");
 
-            assert_eq!(&expected, under_test.get_path())
+            assert_eq!(&expected, under_test.unwrap().get_path())
         }
 
         #[test]
@@ -100,7 +96,7 @@ mod tests {
 
             let source_worship = FileSource::Complex {
                 path: "file.txt".to_owned(),
-                in_worship: Some(true)
+                in_worship: Some(true),
             };
 
             let worship = Worship {
@@ -118,8 +114,8 @@ mod tests {
             let expected_local = Path::new("/target").join("file.txt");
             let expected_worship = Path::new("/worship").join("file.txt");
 
-            assert_eq!(&expected_local, under_test_local.get_path());
-            assert_eq!(&expected_worship, under_test_worship.get_path());
+            assert_eq!(&expected_local, under_test_local.unwrap().get_path());
+            assert_eq!(&expected_worship, under_test_worship.unwrap().get_path());
         }
     }
 }

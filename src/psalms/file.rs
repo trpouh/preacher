@@ -1,16 +1,8 @@
-use std::io;
-
-use crate::{
-    psalms::PsalmInfo,
-    worship::{Worship},
-};
+use crate::{psalms::PsalmInfo, worship::Worship};
 use serde::Deserialize;
 
 use super::{
-    deacons::file::{
-        destination::{FileDeacon, FileDestination},
-        source::{FileSource, FileSourceDeacon},
-    },
+    deacons::file::{destination::FileDestination, source::FileSource},
     Psalm, PsalmOutput,
 };
 
@@ -25,7 +17,6 @@ pub struct FileContext {
 
 impl Psalm<FileContext> for FilePsalm {
     fn invoke(context: &FileContext, worship: &Worship) -> PsalmOutput {
-        
         // can not simply copy, maybe downloaded first. put logic into file source/destination
         // file source -> get_path() (http download first -> file_source.check().get_path())
 
@@ -39,16 +30,23 @@ impl Psalm<FileContext> for FilePsalm {
         // let differs = destination.get_content() != file_destination.check()
 
         let file_source = context.source.to_deacon(worship);
-        let source_path = file_source.get_path();
+        if let Err(err) = file_source {
+            return PsalmOutput::failed(context.info.clone(), err);
+        }
+
+        let f = file_source.unwrap();
+        let source_path = f.get_path();
 
         let file_destination = context.target.to_deacon(worship);
-        
+
         if let Err(err) = file_destination {
             return PsalmOutput::failed(context.info.clone(), err);
         }
 
-        let destination_path = file_destination.unwrap().path();
+        let d = file_destination.unwrap();
+        let destination_path = d.path();
 
+        std::fs::copy(source_path, destination_path);
 
         PsalmOutput::simple_from_result(context.info.clone(), Ok("ok".to_owned()))
     }

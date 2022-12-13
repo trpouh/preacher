@@ -12,4 +12,12 @@ psalms:
     file: 
       path: "files/my-yaml-2.yaml"
       create: true
-#  - type: Hello 
+  - type: Copy
+    id: file_copy
+    source: 
+      path: "files/my-yaml.yaml"
+      in_worship: true
+    target: 
+      path: "files/test/yaml-3.yaml"
+      create: true
+      create_parents: true

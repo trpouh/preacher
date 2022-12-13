@@ -1,42 +1,40 @@
 ## The Preacher
 
-Preacher is a lightweight automation tool written in rust. To start working with preacher it is vital to know the concepts of `worship`, `sermon` and `psalm`. 
+Preacher is a lightweight automation tool written in rust. If focuses on simplicity and speed. 
 
-| term    | definition
-|--       |--
-| worship | all neccessary information needed to deliver a `sermon` (aka preaching)
-| sermon  | contains a collection of `psalms` that shell be read and some extra information
-| psalm   | set of instructions
+Its main goals are to 
+
+* provide a lightweight alternative to `ansible-pull` that can run on an embedded device  
+* teach me rust (so use at your own risk)
 
 Currently, the following platforms are supported:
 
 * x86_64-unknown-linux-musl
 * x86_64-apple-darwin
 
+## Installation
 
-This project serves two functions:
+To download the binary for your platform see [releases](https://github.com/trpouh/preacher/releases)  
 
-* (mainly) teach me rust
-* provide a lightweight alternative to ansible(-pull) that can easily run on embedded devices
 
-## Getting Started
+**Windows**  
 
-To download the binary for your platform see [releases](https://github.com/trpouh/preacher/releases) 
-### Windows
+Not in the forseeable future. (But who uses windows on embedded devices)
 
-Not yet!
 
-### MacOS
+**MacOS**
 
 Kickstart with the installation script:
 
-```shell
-curl -s -L https://raw.githubusercontent.com/trpouh/preacher/wip/kickstarter/install-mac.sh | bash
+```bash
+$ curl -s -L https://raw.githubusercontent.com/trpouh/preacher/wip/kickstarter/install-mac.sh | bash
 ```
 
-### Linux
+this will install the `preacher` executable in your current directory and print some useful information into your terminal.
 
-If `zsh` is installed see [MacOS](#macos).
+**Linux**
+
+If `zsh` is installed see [MacOS](#macos). Otherwise see the [releases](https://github.com/trpouh/preacher/releases).
 
 ## Your first sermon
 
@@ -53,8 +51,8 @@ psalms:
 Upon installing and creating a sermon (see [your first sermon](#your-first-sermon)) the preacher can simply be invoked in your prefered terminal:
 
 
-```
-$> ./preacher -h
+```bash
+$ ./preacher -h
 Usage: preacher [OPTIONS]
 
 Options:
@@ -66,8 +64,12 @@ Options:
       --worship-dir <worship_dir>         [default: .preacher/tmp]
   -h, --help                           Print help information
   -V, --version                        Print version information
+```
 
-$> ./preacher
+prints all the possible parameters but just invoking the preacher without providing any arguments should be enough:
+
+```
+$ ./preacher
 ```
 
 which results in the following output (shortened for better readability):
@@ -99,60 +101,30 @@ psalm with id hello_psalm was successful: ok
 Cleanup finished. The worship is over.
 ```
 
-> Did you know? 
-
-You can initiate a sermon with the hello psalm directly from this repository! Just provide it when starting preacher:
+You can initiate a worship with the hello psalm directly from this repository! Just provide it when starting preacher:
 
 
 ```bash
-$> ./preacher --repo https://github.com/trpouh/preacher --branch wip --sermon examples/hello-sermon.yaml
+./preacher --repo https://github.com/trpouh/preacher --branch wip --sermon examples/hello-sermon.yaml
 ```
 
-<!---
-## what exactly happend now?
-
-Upon invoking, the preacher looks for the sermon as provided by the user. In the first example we did not provide a sermon via `-s` so the default `sermon.yaml` was used. 
-
-The whole folder in which the sermon resides will be copied into a temporary directory. A sermon can also be downloaded from a git repository, to use e.g. the sermon in this repository invoke the preacher like this:
-
-All psalms will then be _read_ in the order they are defined in. paths defined in psalms (to e.g. delete/create files) will be relative to `target-folder` (default: `.`).
-
---->
-
 ## Psalms
+> a sacred song or poem used in worship
 
 Psalms are the heart of every worship. They are defined in a list in the `sermon.yaml` file.
 
-Additionaly to their specific fields, psalms shares a couple of common properties that can be leveraged throughout the whole worship:
+They have simple structure:
 
 ```yaml
-- type: <Generic-Psalm>
-  # optional, useful when you want to implement
-  # logic -> start only when x was successful
-  id: String
+- type: String
+  id: Optional<String>
+  name: Optional<String>
 ```
 
-### Deacons
+* `type` defines its purpose.
+* `id` can be used for logic
+* `name` can be used for documentation/logging purposes
 
-Deacons are datatypes to help standardize common processes. A file psalm that manipulates a file for example will always have to have a valid input path (see [File](#file)).
-
-#### File
-
-There are two ways define a file. The simple on is by providing just a filename: 
-
-```yaml
-field: String
-```
-
-If you want to provide more settings, there is also the `complex` option:
-
-```yaml
-field:
-  # required
-  name: String
-  # optional; default: false
-  create: boolean 
-```
 
 ### Hello
 
@@ -214,11 +186,69 @@ participant:
   age: "25"
 ```
 
+## Deacons
+> A deacon is a member of the diaconate, an office in Christian churches that is generally associated with service of some kind [...]
 
-<!---
-The architecture of the preacher is best described in this picture.
+Deacons are datatypes to help standardize common processes. They are documented as datatypes in psalms. 
 
-<p align="center">
-  <img src="https://github.com/trpouh/preacher/blob/docs/docs/arch.svg?raw=true" alt="Preachers architecture"/>
-</p>
---->
+```yaml
+# Example "Copy Psalm"
+- type: Copy
+  source: FileSource # << Deacon (see FileSource)
+  destination: FileDestination # << Deacon (see FileDestination) 
+```
+
+#### FileSource
+
+Files can have multiple sources:
+
+* git
+* http
+* local
+
+provide them as follows:
+
+```yaml
+# local simple
+field: String
+
+# local complex
+field: 
+  path: String
+  # default: false (path is relative to worship, otherwise
+  # is relative to target_folder )
+  in_worship: Optional<boolean>; 
+
+# http (todo!)
+field:
+  url: String
+
+# git (todo!)
+field: 
+  repo: String
+  path: String
+  branch: Optional<String>
+```
+
+
+#### FileDestination
+
+There are multiple ways to define a file destination. The simple on is by providing just a filename: 
+
+```yaml
+# fill fail if the target file does not exist
+field: String
+```
+
+If you want to provide more settings, there is also the `complex` option:
+
+```yaml
+field:
+  # required
+  name: String
+  # optional; default: false
+  create: boolean 
+  # optional; default: false
+  create_parents: boolean
+```
+
