@@ -1,9 +1,10 @@
-use std::process::Command;
-
 use crate::psalms::PsalmInfo;
+
+use std::process::Command;
+use std::collections::HashMap;
 use serde::Deserialize;
 
-use super::{Psalm, PsalmOutput};
+use super::{Psalm, PsalmOutput, PsalmVars};
 
 
 pub struct DebugPsalm { }
@@ -16,7 +17,7 @@ pub struct DebugContext {
 }
 
 impl Psalm<DebugContext> for DebugPsalm {
-    fn invoke(context: &DebugContext, _: &crate::worship::Worship) -> PsalmOutput {
+    fn invoke(context: &DebugContext, _: &crate::worship::Worship, vars: &PsalmVars) -> PsalmOutput {
         
         if context.fail {
             

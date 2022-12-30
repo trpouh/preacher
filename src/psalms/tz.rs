@@ -1,9 +1,7 @@
+use crate::psalms::prelude::{core::*};
 use std::process::Command;
 
-use crate::{psalms::PsalmInfo, utils::cmd::spawn_and_map_to_res};
-use serde::Deserialize;
-
-use super::{Psalm, PsalmOutput};
+use crate::{utils::cmd::spawn_and_map_to_res};
 pub struct TzPsalm {}
 
 #[psalmer::psalm_context]
@@ -25,7 +23,7 @@ impl TzPsalm {
 }
 
 impl Psalm<TzContext> for TzPsalm {
-    fn invoke(context: &TzContext, _: &crate::worship::Worship) -> PsalmOutput {
+    fn invoke(context: &TzContext, _: &crate::worship::Worship, vars: &PsalmVars) -> PsalmOutput {
         let tz = TzPsalm::set_timezone(&context.tz);
 
         PsalmOutput::simple_from_result(context.info.clone(), tz)

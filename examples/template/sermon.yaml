@@ -1,0 +1,24 @@
+variables:
+  name: "john doe"
+psalms:
+  - type: File
+    source:
+      template:
+        flavor: J2 
+      content: | 
+        {% set greeting = "Hello" %}
+        <p>{{ greeting }} <b>{{ name }}</b>, how are you?</p>
+    target: 
+      path: "template-inline.html"
+      create: true
+      create_parents: true
+  - type: File
+    source:
+      template:
+        flavor: J2 
+      path: "template.j2"
+      in_worship: true
+    target: 
+      path: "template-file.html"
+      create: true
+      create_parents: true

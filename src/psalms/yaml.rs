@@ -1,28 +1,22 @@
-use serde::Deserialize;
-
-use crate::{psalms::deacons::file::destination::FileDeacon, worship::Worship, Psalm};
-
-use super::{deacons::file::destination::FileDestination, PsalmInfo, PsalmOutput};
-
+use crate::psalms::prelude::{core::*, deacons::*};
 #[psalmer::psalm_context]
 #[derive(Deserialize)]
 pub struct YamlContext {
-    file: FileDestination,
-
+    target: FileDestination,
+    source: FileSource,
     path: String,
-
-    r#override: String,
 }
 
 impl Psalm<YamlContext> for YamlPsalm {
-    fn invoke(context: &YamlContext, worship: &Worship) -> PsalmOutput {
+    fn invoke(context: &YamlContext, worship: &Worship, vars: &PsalmVars) -> PsalmOutput {
         
-        let file_deacon = FileDeacon::new(&context.file, worship);
+        let file_deacon = FileDeacon::new(&context.target, worship);
+        let source_deacon = context.source.to_deacon(worship, vars).unwrap();
 
         match file_deacon {
             Ok(deacon) => {
 
-                let map_yaml = |c: String| YamlPsalm::r#override(&c, &context.r#override, &context.path);
+                let map_yaml = |c: String| YamlPsalm::r#override(&c, &source_deacon.file_content().unwrap(), &context.path);
 
                 let result = std::fs::read_to_string(deacon.path())
                     .map_err(|err| err.to_string())

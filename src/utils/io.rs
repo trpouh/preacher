@@ -17,12 +17,12 @@ pub fn clone_to_dir(repo: &str, target_dir: &str, branch: Option<&str>) {
 
         if let Ok(status) = exit_status {
             if status.success() {
-                println!(
+                debug!(
                     "Successfully cloned repo to dir: {} (Status: {})",
                     target_dir, status
                 );
             } else {
-                println!("Cloning not successful");
+                error!("Cloning repo was not successful");
             }
         }
     }
@@ -68,12 +68,12 @@ pub fn copy_dir(copy_options: &CopyOptions) {
 
         if let Ok(status) = exit_status {
             if status.success() {
-                println!(
+                debug!(
                     "Successfully copied source dir {} to dir: {} (Status: {})",
                     source_dir, copy_options.target_dir, status
                 );
             } else {
-                println!("Copying not successful");
+                error!("Copying not successful");
             }
         }
     }
@@ -95,7 +95,7 @@ pub fn create_dir(dir: &str, create_parents: bool) {
 
         if let Ok(status) = exit_status {
             if status.success() {
-                println!(
+                debug!(
                     "Successfully created dir {} {}",
                     &dir,
                     if create_parents {
@@ -105,7 +105,7 @@ pub fn create_dir(dir: &str, create_parents: bool) {
                     }
                 );
             } else {
-                println!("Cloning not successful");
+                error!("Cloning not successful");
             }
         }
     }

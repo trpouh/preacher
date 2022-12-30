@@ -14,21 +14,22 @@ pub fn psalm_context(_: TokenStream, input: TokenStream) -> TokenStream {
     //TODO: parametrize PsalmInfo
 
     if let syn::Fields::Named(ref mut fields) = item_struct.fields {
-        let field = syn::Field::parse_named
+        let info = syn::Field::parse_named
             .parse2(quote! {
                 #[serde(flatten)]
                 pub info: PsalmInfo
             })
             .unwrap();
-        /*
-        let attr = syn::Attribute::parse_inner.parse2(quote! {
-            
-        }).unwrap();
 
+        let vars = syn::Field::parse_named
+            .parse2(quote! {
+                #[serde(skip_deserializing)]
+                pub vars: Option<HashMap<String,String>>
+            })
+            .unwrap();
 
-        field.attrs = attr; */
-
-        fields.named.push(field);
+        fields.named.push(info);
+        fields.named.push(vars);
     }
 
     return quote! { #item_struct }.into();

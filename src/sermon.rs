@@ -1,5 +1,6 @@
 use serde::Deserialize;
 use serde_yaml::from_str;
+use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
 
@@ -11,7 +12,7 @@ use crate::utils::io::{self, CopyOptions};
 use crate::worship::Worship;
 
 use crate::psalms::yaml::YamlPsalm;
-use crate::psalms::{Psalm, PsalmOutput};
+use crate::psalms::{Psalm, PsalmOutput, PsalmVars};
 
 use log::debug;
 
@@ -22,22 +23,25 @@ pub enum PsalmContext {
     Yaml(crate::psalms::yaml::YamlContext),
     Timezone(crate::psalms::tz::TzContext),
     Debug(crate::psalms::debug::DebugContext),
-    Copy(crate::psalms::file::FileContext),
+    File(crate::psalms::file::FileContext),
 }
 
 // TODO: macro
-fn invoke_psalm(psalm: &PsalmContext, worship: &Worship) -> PsalmOutput {
+fn invoke_psalm(psalm: &PsalmContext, worship: &Worship, vars: &PsalmVars) -> PsalmOutput {
     match psalm {
-        PsalmContext::Hello(ctx) => HelloPsalm::invoke(ctx, worship),
-        PsalmContext::Yaml(ctx) => YamlPsalm::invoke(ctx, worship),
-        PsalmContext::Timezone(ctx) => TzPsalm::invoke(ctx, worship),
-        PsalmContext::Debug(ctx) => DebugPsalm::invoke(ctx, worship),
-        PsalmContext::Copy(ctx) => FilePsalm::invoke(ctx, worship),
+        PsalmContext::Hello(ctx) => HelloPsalm::invoke(ctx, worship, vars),
+        PsalmContext::Yaml(ctx) => YamlPsalm::invoke(ctx, worship, vars),
+        PsalmContext::Timezone(ctx) => TzPsalm::invoke(ctx, worship, vars),
+        PsalmContext::Debug(ctx) => DebugPsalm::invoke(ctx, worship, vars),
+        PsalmContext::File(ctx) => FilePsalm::invoke(ctx, worship, vars),
     }
 }
 
 #[derive(Deserialize)]
 pub struct Sermon {
+
+    variables: HashMap<String,String>,
+
     psalms: Vec<PsalmContext>,
 
     #[serde(skip_deserializing)]
@@ -46,8 +50,15 @@ pub struct Sermon {
 
 impl Sermon {
     pub fn preach(mut self, worship: &Worship) {
+
+        let vars = &self.variables;
+
         self.psalms.iter().for_each(move |psalm| {
-            let invocation_output = invoke_psalm(psalm, worship);
+
+            let psalm_vars = PsalmVars::new(vars);
+
+            let invocation_output = invoke_psalm(psalm, worship, &psalm_vars);
+
             let psalm_info = invocation_output.info.clone();
 
             let id = psalm_info.id.unwrap_or("n/a".to_owned());
@@ -94,7 +105,7 @@ pub fn initialize(worship: &Worship) -> Result<Sermon, String> {
 
             let error_message = format!(
                 "No sermon found under {}/{}",
-                &worship.sermon, &worship.source_folder);
+                &worship.source_folder, &worship.sermon);
 
             return Err(error_message);
         }

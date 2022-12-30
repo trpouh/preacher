@@ -1,0 +1,10 @@
+foo:
+  bar:
+    is_obj: true
+list:
+- list_item_a
+- list_item_b
+devices:
+- a.js
+- b.js
+- c.js

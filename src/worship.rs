@@ -39,8 +39,9 @@ pub fn initiate_sermon_and_start_preaching () {
         Err(err) => error!("Hallelujah! Couldn't start preaching because of: {}", err)
     }
 
+    /*
     if let Ok(_) = std::fs::remove_dir_all(worship.worship_dir) {
         info!("Cleanup finished. The worship is over.");
-    }
+    } */
 
 }

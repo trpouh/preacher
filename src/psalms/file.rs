@@ -1,10 +1,5 @@
-use crate::{psalms::PsalmInfo, worship::Worship};
-use serde::Deserialize;
-
-use super::{
-    deacons::file::{destination::FileDestination, source::FileSource},
-    Psalm, PsalmOutput,
-};
+use crate::psalms::deacons::file::template::Templating;
+use crate::psalms::prelude::{core::*, deacons::*};
 
 pub struct FilePsalm {}
 
@@ -13,23 +8,12 @@ pub struct FilePsalm {}
 pub struct FileContext {
     source: FileSource,
     target: FileDestination,
+    template: Option<Templating>,
 }
 
 impl Psalm<FileContext> for FilePsalm {
-    fn invoke(context: &FileContext, worship: &Worship) -> PsalmOutput {
-        // can not simply copy, maybe downloaded first. put logic into file source/destination
-        // file source -> get_path() (http download first -> file_source.check().get_path())
-
-        // let SourceDeacon = file_source.check().get_path()
-        // let DesinationDeacon = file_destination.check().get_path()
-
-        // copy(source_deacon.get_path(), destination_deacon.get_path()
-
-        // let new = file_destination.check()
-        // let old = destination.get_content()
-        // let differs = destination.get_content() != file_destination.check()
-
-        let file_source = context.source.to_deacon(worship);
+    fn invoke(context: &FileContext, worship: &Worship, vars: &PsalmVars) -> PsalmOutput {
+        let file_source = context.source.to_deacon(worship, vars);
         if let Err(err) = file_source {
             return PsalmOutput::failed(context.info.clone(), err);
         }
@@ -46,8 +30,10 @@ impl Psalm<FileContext> for FilePsalm {
         let d = file_destination.unwrap();
         let destination_path = d.path();
 
-        let result = std::fs::copy(source_path, destination_path).map_err(|err|err.to_string()).map(|_| "copy was OK".to_owned());
+        let result = std::fs::copy(source_path, destination_path)
+            .map_err(|err| err.to_string())
+            .map(|_| "copy was OK".to_owned());
 
-        PsalmOutput::simple_from_result(context.info.clone(),result)
+        PsalmOutput::simple_from_result(context.info.clone(), result)
     }
 }

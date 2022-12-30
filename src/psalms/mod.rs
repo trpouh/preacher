@@ -1,57 +1,98 @@
+pub use std::{collections::HashMap, iter::Map};
+
 use serde::Deserialize;
 
 use crate::worship::Worship;
 
 pub mod deacons;
 
-pub mod yaml;
-pub mod hello;
-pub mod tz;
 pub mod debug;
 pub mod file;
+pub mod hello;
+pub mod tz;
+pub mod yaml;
+
+pub mod prelude {
+    pub mod core {
+        
+        pub use std::collections::HashMap;
+
+        pub use crate::{
+            psalms::{Psalm, PsalmInput, PsalmOutput, PsalmInfo, PsalmVars},
+            worship::Worship,
+        };
+        
+        pub use serde::Deserialize;
+    }
+
+    pub mod deacons {
+        pub use crate::psalms::deacons::prelude::*;
+    }
+}
 
 #[derive(Clone)]
 pub struct PsalmOutput {
-
     pub info: PsalmInfo,
-    
+
     pub has_changed: Option<bool>,
 
-    pub result: Result<String,String>
-
+    pub result: Result<String, String>,
 }
 
 #[derive(Default, Deserialize, Clone, Debug)]
 pub struct PsalmInfo {
-
     pub id: Option<String>,
 
     pub name: Option<String>,
 
-    pub continue_on_fail: Option<bool>
+    pub continue_on_fail: Option<bool>,
+}
+
+pub struct PsalmVars<'a> {
+    vars: &'a HashMap<String, String>,
+}
+
+impl<'a, 'b> PsalmVars<'a> {
+
+    pub fn new(vars: &'a HashMap<String,String>) -> PsalmVars<'a> {
+        PsalmVars {
+            vars
+        }
+    }
+
+    pub fn get(&self, key: &'b str) -> Option<&'a String> {
+        self.vars.get(key)
+    }
+
+    pub fn get_all(&self) -> &'a HashMap<String,String> {
+        self.vars
+    }
 }
 
 impl PsalmOutput {
-
     pub fn failed(info: PsalmInfo, err: String) -> PsalmOutput {
-        PsalmOutput { 
-            info, 
+        PsalmOutput {
+            info,
             has_changed: None,
-            result: Err(err)
+            result: Err(err),
         }
     }
 
     /*
     pub fn sucessful(info: Option<PsalmInfo>) -> PsalmOutput {
-        PsalmOutput { 
+        PsalmOutput {
             info,
             has_changed: None,
             successful: true
          }
     }*/
 
-    pub fn simple_from_result(info: PsalmInfo, result: Result<String,String> ) -> PsalmOutput {
-        PsalmOutput { info, has_changed: None, result: result }
+    pub fn simple_from_result(info: PsalmInfo, result: Result<String, String>) -> PsalmOutput {
+        PsalmOutput {
+            info,
+            has_changed: None,
+            result: result,
+        }
     }
 }
 
@@ -60,5 +101,5 @@ pub trait PsalmInput {
 }
 
 pub trait Psalm<T> {
-    fn invoke(context: &T, worship: &Worship) -> PsalmOutput;
+    fn invoke(context: &T, worship: &Worship, vars: &PsalmVars) -> PsalmOutput;
 }

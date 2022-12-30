@@ -1,11 +1,6 @@
-use crate::psalms::PsalmInfo;
-use serde::Deserialize;
+use crate::psalms::prelude::{core::*};
 
-use super::{Psalm, PsalmOutput};
-
-
-pub struct HelloPsalm { }
-
+pub struct HelloPsalm {}
 #[psalmer::psalm_context]
 #[derive(Deserialize)]
 pub struct HelloContext {
@@ -13,7 +8,7 @@ pub struct HelloContext {
 }
 
 impl Psalm<HelloContext> for HelloPsalm {
-    fn invoke(context: &HelloContext, _: &crate::worship::Worship) -> PsalmOutput {
+    fn invoke(context: &HelloContext, _: &crate::worship::Worship, vars: &PsalmVars) -> PsalmOutput {
         
         let name = context.name.clone();
 

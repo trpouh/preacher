@@ -1,0 +1,22 @@
+psalms:
+  - type: Yaml
+    name: test
+    id: yaml-inline
+    path: "$.devices"
+    source: 
+      content: |
+        [a.js, b.js, c.js]
+    target: 
+      path: "inline/target.yaml"
+      create: true
+
+  - type: Yaml
+    name: test
+    id: yaml-source-file
+    path: "$.person"
+    source: 
+      path: "test-source-file/source.yaml"
+      in_worship: true
+    target: 
+      path: "test-source-file/target.yaml"
+      create: true
