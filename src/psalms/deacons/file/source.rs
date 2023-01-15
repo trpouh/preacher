@@ -1,12 +1,11 @@
 use std::{
-    collections::HashMap,
     fs::File,
     io::{Read, Write},
     path::{Path, PathBuf},
 };
 use uuid::Uuid;
 
-use crate::{worship::Worship, psalms::PsalmVars};
+use crate::{psalms::PsalmVars, worship::Worship};
 use serde::Deserialize;
 
 use super::template::Templating;
@@ -41,7 +40,11 @@ pub struct FileSource {
 }
 
 impl FileSource {
-    pub fn to_deacon<'a>(&'a self, worship: &'a Worship, vars: &PsalmVars) -> Result<FileSourceDeacon, String> {
+    pub fn to_deacon<'a>(
+        &'a self,
+        worship: &'a Worship,
+        vars: &PsalmVars,
+    ) -> Result<FileSourceDeacon, String> {
         FileSourceDeacon::new(self, worship, vars)
     }
 }
@@ -50,7 +53,11 @@ pub struct FileSourceDeacon {
 }
 
 impl FileSourceDeacon {
-    fn new<'a>(source: &'a FileSource, worship: &'a Worship, vars: &PsalmVars) -> Result<FileSourceDeacon, String> {
+    fn new<'a>(
+        source: &'a FileSource,
+        worship: &'a Worship,
+        vars: &PsalmVars,
+    ) -> Result<FileSourceDeacon, String> {
         //TODO: clean a bit up
         let path: Result<PathBuf, String> = match &source.source {
             Source::Http { url: _ } => todo!("should download file to local disk"),
@@ -68,23 +75,17 @@ impl FileSourceDeacon {
                 };
                 Ok(Path::new(&root).join(path))
             }
-            Source::Inline { content } => FileSourceDeacon::write_to_tmp(&worship.worship_dir, content)
+            Source::Inline { content } => {
+                FileSourceDeacon::write_to_tmp(&worship.worship_dir, content)
+            }
         };
 
         let templated = path.and_then(|path| {
             if let Some(template) = &source.template {
-                let res = match &template.flavor {
-                    _j2 => {
-                        let result = template.to_deacon(&path);
-                        info!("path: {:?}", path.display());
-
-                        result.template(vars.vars).and_then(|res| {
-                            FileSourceDeacon::write_to_tmp(&worship.worship_dir, &res)
-                        })
-                    }
-                };
-
-                return res;
+                return template
+                    .to_deacon(&path)
+                    .template(vars.vars)
+                    .and_then(|res| FileSourceDeacon::write_to_tmp(&worship.worship_dir, &res));
             }
 
             Ok(path)
@@ -113,8 +114,7 @@ impl FileSourceDeacon {
 
         file.and_then(|mut file| {
             let mut contents = String::new();
-            file.read_to_string(&mut contents)
-                .and_then(|_| Ok(contents))
+            file.read_to_string(&mut contents).map(|_| contents)
         })
         .map_err(|err| err.to_string())
     }
@@ -124,10 +124,16 @@ impl FileSourceDeacon {
 mod tests {
 
     mod path {
-        use std::{path::Path, collections::HashMap};
+        use std::{collections::HashMap, path::Path};
 
         use crate::{
-            psalms::{deacons::file::{source::{FileSource, Source}, template::Templating}, PsalmVars},
+            psalms::{
+                deacons::file::{
+                    source::{FileSource, Source},
+                    template::Templating,
+                },
+                PsalmVars,
+            },
             worship::Worship,
         };
         #[test]
@@ -146,7 +152,12 @@ mod tests {
                 target_folder: "/test".to_owned(),
             };
 
-            let under_test = source.to_deacon(&worship, &PsalmVars { vars: &HashMap::default()});
+            let under_test = source.to_deacon(
+                &worship,
+                &PsalmVars {
+                    vars: &HashMap::default(),
+                },
+            );
 
             let expected = Path::new("/test").join("file.txt");
 
@@ -180,8 +191,18 @@ mod tests {
                 target_folder: "/target".to_owned(),
             };
 
-            let under_test_local = source_local.to_deacon(&worship, &PsalmVars { vars: &HashMap::default()});
-            let under_test_worship = source_worship.to_deacon(&worship, &PsalmVars { vars: &HashMap::default()});
+            let under_test_local = source_local.to_deacon(
+                &worship,
+                &PsalmVars {
+                    vars: &HashMap::default(),
+                },
+            );
+            let under_test_worship = source_worship.to_deacon(
+                &worship,
+                &PsalmVars {
+                    vars: &HashMap::default(),
+                },
+            );
 
             let expected_local = Path::new("/target").join("file.txt");
             let expected_worship = Path::new("/worship").join("file.txt");
@@ -197,7 +218,7 @@ mod tests {
                     content: "{% set greeting = \"Hello\" %}{{ greeting }}".to_owned(),
                 },
                 template: Some(Templating {
-                    flavor: crate::psalms::deacons::file::template::TemplatingLanguage::J2
+                    flavor: crate::psalms::deacons::file::template::TemplatingLanguage::J2,
                 }),
             };
 
@@ -210,7 +231,12 @@ mod tests {
                 target_folder: "/target".to_owned(),
             };
 
-            let under_test_local = source.to_deacon(&worship, &PsalmVars { vars: &HashMap::default()});
+            let under_test_local = source.to_deacon(
+                &worship,
+                &PsalmVars {
+                    vars: &HashMap::default(),
+                },
+            );
             let expected_local = Path::new("/target").join("file.txt");
 
             assert_eq!(&expected_local, under_test_local.unwrap().get_path());

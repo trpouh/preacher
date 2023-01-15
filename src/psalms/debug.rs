@@ -12,12 +12,12 @@ pub struct DebugPsalm { }
 #[psalmer::psalm_context]
 #[derive(Deserialize)]
 pub struct DebugContext {
-    message: Option<String>,
+    _message: Option<String>,
     fail: bool
 }
 
 impl Psalm<DebugContext> for DebugPsalm {
-    fn invoke(context: &DebugContext, _: &crate::worship::Worship, vars: &PsalmVars) -> PsalmOutput {
+    fn invoke(context: &DebugContext, _: &crate::worship::Worship, _vars: &PsalmVars) -> PsalmOutput {
         
         if context.fail {
             

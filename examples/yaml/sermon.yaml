@@ -2,7 +2,7 @@ psalms:
   - type: Yaml
     name: test
     id: yaml-inline
-    path: "$.devices"
+    yaml_path: "$.devices"
     source: 
       content: |
         [a.js, b.js, c.js]
@@ -13,7 +13,7 @@ psalms:
   - type: Yaml
     name: test
     id: yaml-source-file
-    path: "$.person"
+    yaml_path: "$.person"
     source: 
       path: "test-source-file/source.yaml"
       in_worship: true

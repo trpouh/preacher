@@ -1,8 +1,8 @@
 use serde::Deserialize;
 use serde_yaml::from_str;
 use std::collections::HashMap;
-use std::fs;
 use std::path::Path;
+use std::{env, fs};
 
 use crate::psalms::debug::DebugPsalm;
 use crate::psalms::file::FilePsalm;
@@ -39,8 +39,7 @@ fn invoke_psalm(psalm: &PsalmContext, worship: &Worship, vars: &PsalmVars) -> Ps
 
 #[derive(Deserialize)]
 pub struct Sermon {
-
-    variables: HashMap<String,String>,
+    variables: Option<HashMap<String, Var>>,
 
     psalms: Vec<PsalmContext>,
 
@@ -48,27 +47,51 @@ pub struct Sermon {
     outputs: Vec<PsalmOutput>,
 }
 
+#[derive(Deserialize)]
+#[serde(untagged)]
+enum Var {
+    Simple(String),
+    Env {
+        env: String,
+        default: Option<String>,
+    },
+}
+
+fn parse(vars: &HashMap<String, Var>) -> HashMap<String, String> {
+    let resolve_value: fn(&Var) -> Option<String> = |v| match v {
+        Var::Simple(value) => Some(value.to_owned()),
+        //TODO: think about maybe automatic parsing of env vars (uppercased)
+        Var::Env { env, default } => env::var(env).ok().or_else(|| default.to_owned()),
+    };
+
+    vars.iter()
+        .map(|(k, v)| (k.to_owned(), resolve_value(v)))
+        .filter(|(_, v)| v.is_some())
+        .map(|(k, v)| (k, v.unwrap_or_default()))
+        .collect()
+}
+
 impl Sermon {
     pub fn preach(mut self, worship: &Worship) {
-
         let vars = &self.variables;
 
         self.psalms.iter().for_each(move |psalm| {
+            let vars = vars.as_ref().map(parse).unwrap_or_default();
 
-            let psalm_vars = PsalmVars::new(vars);
+            let psalm_vars = PsalmVars::new(&vars);
 
             let invocation_output = invoke_psalm(psalm, worship, &psalm_vars);
 
             let psalm_info = invocation_output.info.clone();
 
-            let id = psalm_info.id.unwrap_or("n/a".to_owned());
+            let id = psalm_info.id.unwrap_or_else(|| "n/a".to_owned());
 
             match &invocation_output.result {
                 Ok(output) => info!("psalm with id {} was successful: {}", &id, output),
                 Err(err) => error!("psalm with id {} was not successful: {}", &id, err),
             };
 
-            self.outputs.push(invocation_output.clone());
+            self.outputs.push(invocation_output);
         });
     }
 }
@@ -88,8 +111,7 @@ pub fn initialize(worship: &Worship) -> Result<Sermon, String> {
         if fs::read_to_string(sermon_path).is_ok() {
             debug!(
                 "Copying local folder {} into folder {}",
-                worship.source_folder,
-                worship_dir
+                worship.source_folder, worship_dir
             );
 
             let copy_opts: CopyOptions = CopyOptions {
@@ -102,10 +124,10 @@ pub fn initialize(worship: &Worship) -> Result<Sermon, String> {
 
             io::copy_dir(&copy_opts); //&worship.source_folder, worship_dir);
         } else {
-
             let error_message = format!(
                 "No sermon found under {}/{}",
-                &worship.source_folder, &worship.sermon);
+                &worship.source_folder, &worship.sermon
+            );
 
             return Err(error_message);
         }

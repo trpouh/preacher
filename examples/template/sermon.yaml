@@ -1,17 +1,23 @@
 variables:
+  create_parents_default: true
+  create_files_default: true
   name: "john doe"
+  log:
+    env: "RUST_LOG"
 psalms:
+
   - type: File
     source:
       template:
         flavor: J2 
       content: | 
         {% set greeting = "Hello" %}
-        <p>{{ greeting }} <b>{{ name }}</b>, how are you?</p>
+        <p>{{ greeting }} <b>{{ name }}</b>, how are you?</p> {{ log }}
     target: 
       path: "template-inline.html"
       create: true
       create_parents: true
+
   - type: File
     source:
       template:

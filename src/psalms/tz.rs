@@ -23,7 +23,7 @@ impl TzPsalm {
 }
 
 impl Psalm<TzContext> for TzPsalm {
-    fn invoke(context: &TzContext, _: &crate::worship::Worship, vars: &PsalmVars) -> PsalmOutput {
+    fn invoke(context: &TzContext, _: &crate::worship::Worship, _: &PsalmVars) -> PsalmOutput {
         let tz = TzPsalm::set_timezone(&context.tz);
 
         PsalmOutput::simple_from_result(context.info.clone(), tz)

@@ -1,0 +1,18 @@
+variables:
+  name:
+    env: "NAME"
+psalms:
+- type: Yaml
+  source:
+    template:
+      flavor: J2 
+    content: | 
+      {% if name is defined %}
+      welcome {{ name }}!
+      {% else %}
+      please define a name
+      {% endif %}
+  target: 
+    path: "template-inline.html"
+    create: true
+    create_parents: true

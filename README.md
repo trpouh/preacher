@@ -75,7 +75,7 @@ $ ./preacher
 which results in the following output (shortened for better readability):
 
 ```
-hey there stranger! congratulations to your first successful worship.
+Hey there stranger! Congratulations to your first successful worship.
 
 psalm with id n/a was successful: ok
 

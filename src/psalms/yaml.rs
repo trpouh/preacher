@@ -4,7 +4,7 @@ use crate::psalms::prelude::{core::*, deacons::*};
 pub struct YamlContext {
     target: FileDestination,
     source: FileSource,
-    path: String,
+    yaml_path: Option<String>,
 }
 
 impl Psalm<YamlContext> for YamlPsalm {
@@ -16,7 +16,9 @@ impl Psalm<YamlContext> for YamlPsalm {
         match file_deacon {
             Ok(deacon) => {
 
-                let map_yaml = |c: String| YamlPsalm::r#override(&c, &source_deacon.file_content().unwrap(), &context.path);
+                let json_path = context.yaml_path.clone().unwrap_or_else(|| "$".to_owned());
+
+                let map_yaml = |c: String| YamlPsalm::r#override(&c, &source_deacon.file_content().unwrap(), &json_path);
 
                 let result = std::fs::read_to_string(deacon.path())
                     .map_err(|err| err.to_string())

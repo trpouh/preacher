@@ -52,20 +52,12 @@ pub struct PsalmVars<'a> {
     vars: &'a HashMap<String, String>,
 }
 
-impl<'a, 'b> PsalmVars<'a> {
+impl<'a> PsalmVars<'a> {
 
     pub fn new(vars: &'a HashMap<String,String>) -> PsalmVars<'a> {
         PsalmVars {
             vars
         }
-    }
-
-    pub fn get(&self, key: &'b str) -> Option<&'a String> {
-        self.vars.get(key)
-    }
-
-    pub fn get_all(&self) -> &'a HashMap<String,String> {
-        self.vars
     }
 }
 
@@ -91,7 +83,7 @@ impl PsalmOutput {
         PsalmOutput {
             info,
             has_changed: None,
-            result: result,
+            result,
         }
     }
 }

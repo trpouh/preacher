@@ -1,4 +1,3 @@
-use crate::psalms::deacons::file::template::Templating;
 use crate::psalms::prelude::{core::*, deacons::*};
 
 pub struct FilePsalm {}
@@ -8,7 +7,6 @@ pub struct FilePsalm {}
 pub struct FileContext {
     source: FileSource,
     target: FileDestination,
-    template: Option<Templating>,
 }
 
 impl Psalm<FileContext> for FilePsalm {
