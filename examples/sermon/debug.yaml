@@ -1,0 +1,9 @@
+variables:
+  name: "//remove me//"
+psalms:
+- type: Debug
+  echo: 
+    template:
+      flavor: J2
+    content: |
+      hello {{ name }}! 

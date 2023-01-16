@@ -1,5 +1,12 @@
 use crate::psalms::prelude::{core::*};
 
+/*
+
+Use this file as a starting point for a new psalm.
+Strg+F "Hello" and replace with desired name
+
+*/
+
 pub struct HelloPsalm {}
 #[psalmer::psalm_context]
 #[derive(Deserialize)]

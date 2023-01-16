@@ -1,0 +1,13 @@
+variables:
+  name: "trpouh"
+psalms:
+- type: Sermon
+  id: hello_psalms
+  sermon:
+    path: "hello.yaml"
+    in_worship: true
+- type: Sermon
+  id: debug_psalm
+  sermon:
+    path: "debug.yaml"
+    in_worship: true

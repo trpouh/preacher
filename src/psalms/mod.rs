@@ -11,6 +11,7 @@ pub mod file;
 pub mod hello;
 pub mod tz;
 pub mod yaml;
+pub mod sermon;
 
 pub mod prelude {
     pub mod core {
@@ -59,6 +60,10 @@ impl<'a> PsalmVars<'a> {
             vars
         }
     }
+
+    fn get_map(&self) -> &HashMap<String,String> {
+        self.vars
+    }
 }
 
 impl PsalmOutput {
@@ -70,14 +75,14 @@ impl PsalmOutput {
         }
     }
 
-    /*
-    pub fn sucessful(info: Option<PsalmInfo>) -> PsalmOutput {
+    
+    pub fn sucessful(info: PsalmInfo) -> PsalmOutput {
         PsalmOutput {
             info,
             has_changed: None,
-            successful: true
+            result: Ok("OK".to_owned())
          }
-    }*/
+    }
 
     pub fn simple_from_result(info: PsalmInfo, result: Result<String, String>) -> PsalmOutput {
         PsalmOutput {

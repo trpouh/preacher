@@ -1,6 +1,0 @@
-psalms:
-#- type: Hello
-#  id: hello_psalm
-#  name: John Doe
-- type: Timezone
-  tz: Austria/Vienna

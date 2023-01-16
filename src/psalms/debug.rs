@@ -4,7 +4,7 @@ use std::process::Command;
 use std::collections::HashMap;
 use serde::Deserialize;
 
-use super::{Psalm, PsalmOutput, PsalmVars};
+use super::{Psalm, PsalmOutput, PsalmVars, deacons::prelude::FileSource};
 
 
 pub struct DebugPsalm { }
@@ -12,25 +12,22 @@ pub struct DebugPsalm { }
 #[psalmer::psalm_context]
 #[derive(Deserialize)]
 pub struct DebugContext {
-    _message: Option<String>,
-    fail: bool
+    echo: FileSource
 }
 
 impl Psalm<DebugContext> for DebugPsalm {
-    fn invoke(context: &DebugContext, _: &crate::worship::Worship, _vars: &PsalmVars) -> PsalmOutput {
+    fn invoke(context: &DebugContext, worship: &crate::worship::Worship, vars: &PsalmVars) -> PsalmOutput {
         
-        if context.fail {
-            
-            let command = Command::new("true").output();
+        let deacon = context.echo.to_deacon(worship, vars).and_then(|d|d.file_content());
 
-            if let Ok(out) = command {
-                println!("out: {}", out.status);
-            }
-
-            return PsalmOutput::simple_from_result(context.info.clone(), Ok("ok".to_owned()));
-
+        if let Ok(c) = deacon {
+             info!("---Debugging Start");
+             info!("{}", c);
+             info!("---Debugging End");
+        } else if let Err(e) = deacon {
+            error!("Error debugging: {}", e);
         }
-        
+
         PsalmOutput::simple_from_result(context.info.clone(), Ok("ok".to_owned()))
     }
 }
