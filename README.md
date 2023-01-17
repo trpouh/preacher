@@ -162,12 +162,12 @@ example (add a child to the root object):
 
 ```yaml
 - type: Yaml
-  override: 
+  source: 
     content: |
       name: John Doe
       age: 25
   target: "my-file.yaml"
-  path: "$.participant"
+  yaml_path: "$.participant"
 ```
 
 will result in:
