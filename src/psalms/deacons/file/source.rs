@@ -5,7 +5,7 @@ use std::{
 };
 use uuid::Uuid;
 
-use crate::{psalms::PsalmVars, worship::Worship};
+use crate::{psalms::PsalmVars, worship::Worship, utils::io};
 use serde::Deserialize;
 
 use super::template::Templating;
@@ -23,8 +23,8 @@ pub enum Source {
     },
     Git {
         repo: String,
-        path: String,
-        branch: Option<bool>,
+        file: String,
+        branch: Option<String>,
     },
     Inline {
         content: String,
@@ -62,10 +62,19 @@ impl FileSourceDeacon {
         let path: Result<PathBuf, String> = match &source.source {
             Source::Http { url: _ } => todo!("should download file to local disk"),
             Source::Git {
-                repo: _,
-                branch: _,
-                path: _,
-            } => todo!("should download file to local disk"),
+                repo,
+                branch,
+                file,
+            } => {
+
+                let uuid = Uuid::new_v4().to_string();
+                let target_path = Path::new(&worship.worship_dir).join(uuid);
+
+                io::clone_to_dir(repo, &format!("{}", target_path.as_path().display()), branch.as_ref().map(|s|s.as_str())).map(|_| {
+                    target_path.join(file)
+                })
+                
+            },
             Source::Simple(path) => Ok(Path::new(&worship.target_folder).join(path)),
             Source::Complex { path, in_worship } => {
                 let root = if in_worship.unwrap_or(false) {

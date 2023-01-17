@@ -1,4 +1,4 @@
-use std::process::Command;
+use std::process::{Child, Command, Stdio};
 
 #[cfg(test)]
 mod tests {
@@ -36,16 +36,25 @@ mod tests {
     }
 }
 
-pub fn spawn_and_map_to_res(command: &mut Command) -> Result<String, String> {
-    let cmd = command.output();
+fn extract_output(child: Child) -> Result<String, String> {
+    match child.wait_with_output() {
+        Ok(out) => {
+            if out.status.success() {
+                return Ok(String::from_utf8_lossy(&out.stdout).to_string());
+            }
 
-    if let Ok(out) = cmd {
-        if out.status.success() {
-            return Ok(String::from_utf8_lossy(&out.stdout).to_string());
+            return Err(String::from_utf8_lossy(&out.stderr).to_string());
         }
-
-        return Err(String::from_utf8_lossy(&out.stderr).to_string());
+        Err(err) => Err(err.to_string()),
     }
+}
 
-    Err(cmd.err().map(|err| err.to_string()).unwrap_or_default())
+pub fn spawn_and_map_to_res(command: &mut Command) -> Result<String, String> {
+    
+    let cmd = command
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn();
+
+    cmd.map_err(|err| err.to_string()).and_then(extract_output)
 }

@@ -1,6 +1,5 @@
 use crate::psalms::PsalmInfo;
 
-use std::process::Command;
 use std::collections::HashMap;
 use serde::Deserialize;
 

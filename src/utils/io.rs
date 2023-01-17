@@ -1,7 +1,16 @@
 use std::process::Command;
 
+use super::cmd;
+
 //TODO: Error handling
-pub fn clone_to_dir(repo: &str, target_dir: &str, branch: Option<&str>) {
+//TODO: Use Command Result
+pub fn clone_to_dir(repo: &str, target_dir: &str, branch: Option<&str>) -> Result<String, String> {
+    debug!(
+        "Trying to clone git repo {}:({})",
+        repo,
+        branch.unwrap_or("main")
+    );
+
     let mut command_result = Command::new("git");
 
     command_result.arg("clone");
@@ -12,20 +21,17 @@ pub fn clone_to_dir(repo: &str, target_dir: &str, branch: Option<&str>) {
 
     command_result.arg(repo).arg(target_dir);
 
-    if let Ok(mut child) = command_result.spawn() {
-        let exit_status = child.wait();
+    let res = cmd::spawn_and_map_to_res(&mut command_result);
 
-        if let Ok(status) = exit_status {
-            if status.success() {
-                debug!(
-                    "Successfully cloned repo to dir: {} (Status: {})",
-                    target_dir, status
-                );
-            } else {
-                error!("Cloning repo was not successful");
-            }
-        }
-    }
+    match &res {
+        Ok(ok) => debug!(
+            "Successfully cloned repo to dir: {} (Status: {})",
+            target_dir, ok
+        ),
+        Err(err) => error!("Cloning repo was not successful: {}", err),
+    };
+
+    res
 }
 
 pub struct CopyOptions<'a> {

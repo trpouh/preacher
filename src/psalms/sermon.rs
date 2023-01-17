@@ -1,3 +1,5 @@
+use std::path::Path;
+
 use serde_yaml::from_str;
 
 use crate::{psalms::prelude::{core::*}, sermon::{Sermon, Status, SermonStatus}};
@@ -22,12 +24,23 @@ pub struct SermonContext {
 impl Psalm<SermonContext> for SermonPsalm {
     fn invoke(context: &SermonContext, worship: &crate::worship::Worship, vars: &PsalmVars) -> PsalmOutput {
 
-        let deacon = context.sermon.to_deacon(worship, vars);
 
-        let sermon: Result<Sermon,String> = deacon.and_then(|x| x.file_content()).and_then(|c|from_str(&c).map_err(|e|e.to_string()));
+        let _deacon = context.sermon.to_deacon(worship, vars);
 
-        match sermon {
-            Ok(s) => SermonPsalm::from_sermon_status(&s.preach_with_vars(worship, vars.get_map()), context.info.clone()),
+        match _deacon {
+            Ok(deacon) => {
+
+                let mut new_worship: Worship = worship.clone();
+                new_worship.worship_dir = format!("{}", deacon.get_path().parent().unwrap_or(&Path::new("/")).display());
+                
+                let sermon: Result<Sermon,String> = deacon.file_content().and_then(|c| from_str(&c).map_err(|err|err.to_string()));
+                
+                match sermon {
+                    Ok(s) => SermonPsalm::from_sermon_status(&s.preach_with_vars(worship, vars.get_map()), context.info.clone()),
+                    Err(err) => PsalmOutput::failed(context.info.clone(), err)
+                }
+
+            },
             Err(err) => PsalmOutput::failed(context.info.clone(), err)
         }
     }

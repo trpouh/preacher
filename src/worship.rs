@@ -2,7 +2,7 @@ pub use clap::Parser;
 use uuid::Uuid;
 
 use crate::sermon;
-#[derive(Parser)]
+#[derive(Parser, Clone)]
 #[command(author, version, about, long_about = None)]
 
 //TODO: split up input and output
@@ -40,7 +40,7 @@ pub fn initiate_sermon_and_start_preaching() {
         Err(err) => error!("Hallelujah! Couldn't start preaching because of: {}", err),
     }
 
-    if std::fs::remove_dir_all(worship.worship_dir).is_ok() {
+    /*if std::fs::remove_dir_all(worship.worship_dir).is_ok() {
         info!("Cleanup finished. The worship is over.");
-    }
+    }*/
 }

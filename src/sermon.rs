@@ -133,7 +133,7 @@ pub fn initialize(worship: &Worship) -> Result<Sermon, String> {
     if let Some(repo) = &worship.repo {
         info!("Cloning git repo {} into folder {}", repo, worship_dir);
         io::create_dir(worship_dir, true);
-        io::clone_to_dir(repo, worship_dir, worship.branch.as_deref())
+        io::clone_to_dir(repo, worship_dir, worship.branch.as_deref()).expect("Can't clone sermon");
     } else {
         let sermon_path = Path::new(&worship.source_folder).join(&worship.sermon);
 
