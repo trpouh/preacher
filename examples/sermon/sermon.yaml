@@ -14,8 +14,7 @@ psalms:
     in_worship: true
 
 - type: Sermon
-  id: docker_compose
   sermon:
-    repo: https://github.com/trpouh/preacher-docker-compose.git
+    repo: https://github.com/trpouh/preacher-example-sermon.git
     file: sermon.yaml
     branch: main

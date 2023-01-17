@@ -31,7 +31,7 @@ impl Psalm<SermonContext> for SermonPsalm {
             Ok(deacon) => {
 
                 let mut new_worship: Worship = worship.clone();
-                new_worship.worship_dir = format!("{}", deacon.get_path().parent().unwrap_or(&Path::new("/")).display());
+                new_worship.worship_dir = format!("{}", deacon.get_path().parent().unwrap_or_else(|| Path::new("/")).display());
                 
                 let sermon: Result<Sermon,String> = deacon.file_content().and_then(|c| from_str(&c).map_err(|err|err.to_string()));
                 
