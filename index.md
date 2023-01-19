@@ -1,9 +1,10 @@
 ---
 title: Welcome
+layout: default
 nav_order: 1
 ---
 # Welcome
-Welcome to the `Preacher` documentation. Preacher is a system-level automation tool built in rust. If you want to skip reading documentation (not recommended!) and want to start automating right away we've got you covered in the [Quickstart](/quickstart.html).
+Welcome to the `Preacher` documentation. Preacher is a system-level automation tool built in rust. If you want to skip reading documentation (not recommended!) and want to start automating right away we've got you covered in the [Quickstart Guide](/docs/essentials/quickstart.html).
 
 # Documentation structure
 
