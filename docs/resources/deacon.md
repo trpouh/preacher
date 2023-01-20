@@ -1,5 +1,8 @@
 ---
-title: Psalms
+title: Deacons
+layout: default
+parent: Resources
+nav_order: 4
 ---
 ## Psalms
 > a sacred song or poem used in worship

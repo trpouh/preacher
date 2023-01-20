@@ -4,6 +4,10 @@ layout: default
 nav_order: 1
 ---
 # Welcome
+
+{: .careful }
+Be advised, Preacher is still young and unstable. Use at your own risk. If you discover bugs or have a feature request [open an Issue](https://github.com/trpouh/preacher/issues/new/choose).
+
 Welcome to the `Preacher` documentation. Preacher is a system-level automation tool built in rust. If you want to skip reading documentation (not recommended!) and want to start automating right away we've got you covered in the [Quickstart Guide](/docs/essentials/quickstart.html).
 
 # Documentation structure

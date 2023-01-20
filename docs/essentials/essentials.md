@@ -13,4 +13,4 @@ All the neccessary information we think you should know to start experimenting w
 * **[Quickstart Guide](quickstart.html)** : Install the Preacher and create your first `Sermon`
 
 * **[Next steps](next-steps.html)** : 
-Links the previously learned concepts with  documentation to help you continue your journey.
+Links the previously learned concepts with documentation to help you continue your journey.

@@ -1,5 +1,8 @@
 ---
 title: Psalms
+layout: default
+parent: Resources
+nav_order: 3
 ---
 ## Psalms
 > a sacred song or poem used in worship
