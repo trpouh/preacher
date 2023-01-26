@@ -8,7 +8,7 @@ has_children: true
 # Essentials
 All the neccessary information we think you should know to start experimenting with the **Preacher**.
 
-* **[3 Minuter](three-minuter.html)**: Quick Overview of the concepts of the Preacher (Should not take longer than three minutes tops!)
+* **[One Minuter](one-minuter.html)**: Quick Overview of the concepts of the Preacher (**reading time**: 1 minute)
 
 * **[Quickstart Guide](quickstart.html)** : Install the Preacher and create your first `Sermon`
 
