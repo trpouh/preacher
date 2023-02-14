@@ -1,0 +1,218 @@
+{"0": {
+    "doc": "Copy",
+    "title": "Syntax",
+    "content": "| field | type/format | optional (default value) | example | . | source | Source | yes | /foo/bar.txt | . | destination | Destiantion | yes | /foo/bar.txt | . ",
+    "url": "/docs/resources/psalms/copy.html#syntax",
+    "relUrl": "/docs/resources/psalms/copy.html#syntax"
+  },"1": {
+    "doc": "Copy",
+    "title": "Requirements",
+    "content": "Access rights (read, write) to all the sources and directories in question. ",
+    "url": "/docs/resources/psalms/copy.html#requirements",
+    "relUrl": "/docs/resources/psalms/copy.html#requirements"
+  },"2": {
+    "doc": "Copy",
+    "title": "Examples",
+    "content": "# sermon.yaml psalms: # simple copy - type: Copy source: /file.txt destination: /foo/bar.txt # copy from git repo - type: Copy source: repo: http://git.srv/repo.git file: myfile.txt destination: /local/myfile.txt # copy inline and create parents - type: Copy source: content: | myuser:passwd destination: path: /usr/secret/passwds create_parents: true # copy J2 template - type: Copy source: content: | {% set user = \"trpouh\" %} {% set passwd = \"trpouh123\" %} {{ user }}:{{passwd}} template: flavor: J2 destination: path: /usr/passwds # copy J2 template from git - type: Copy source: repo: http://git.srv/repo.git file: notpasswords.txt.j2 template: flavor: J2 destination: path: /usr/passwds . ",
+    "url": "/docs/resources/psalms/copy.html#examples",
+    "relUrl": "/docs/resources/psalms/copy.html#examples"
+  },"3": {
+    "doc": "Copy",
+    "title": "Copy",
+    "content": "Copy binary content from a given source to a given destination. # sermon.yaml psalms: - type: Copy source: /file.txt destination: /foo/bar.txt . ",
+    "url": "/docs/resources/psalms/copy.html",
+    "relUrl": "/docs/resources/psalms/copy.html"
+  },"4": {
+    "doc": "Deacons",
+    "title": "Source",
+    "content": "One of the most common deacons is Source. It is used whenevery a psalms is based on any kind of IO operation. It provides a standardized way of providing a binary source to a Sermon. Currently the Source deacon supports the following sources: . | filesystem (simple and complex) | git repository | inline | http (soon) | . ",
+    "url": "/docs/resources/deacon.html#source",
+    "relUrl": "/docs/resources/deacon.html#source"
+  },"5": {
+    "doc": "Deacons",
+    "title": "Filesystem (Simple)",
+    "content": "To include a file from your filesystem, providing a path is as simple as it can get. Keep in mind, that with this syntax the path will be resolved relative to the worship_dir. source: \"foo/bar.txt\" . Which resolves to this path: . worship/ ├── sermon.yaml └── foo/ ├── bar.txt &lt;-- this file . ",
+    "url": "/docs/resources/deacon.html#filesystem-simple",
+    "relUrl": "/docs/resources/deacon.html#filesystem-simple"
+  },"6": {
+    "doc": "Deacons",
+    "title": "Filesystem (Complex)",
+    "content": "When you want to provide more parameters than just the path, you can leverage the Complex source by changing the source field to an object like this: . source: path: \"foo/bar.txt\" in_worship: false . if in_worship is set to false, the path will resolve based on the target_folder (insert link to understanding documentation) as configured in the worship. $ preacher -target_folder /app -s sermon.yaml . with this start configuration path will resolve to . / └── app/ ├── foo/ └───── bar.txt &lt;-- this file . ",
+    "url": "/docs/resources/deacon.html#filesystem-complex",
+    "relUrl": "/docs/resources/deacon.html#filesystem-complex"
+  },"7": {
+    "doc": "Deacons",
+    "title": "Git",
+    "content": "To retrieve a file from a git repository, simply provide these parameters: . source: repo: https://git.srv/my-repo.git branch: main # optional; default: main file: foo/bar.txt . ",
+    "url": "/docs/resources/deacon.html#git",
+    "relUrl": "/docs/resources/deacon.html#git"
+  },"8": {
+    "doc": "Deacons",
+    "title": "Inline",
+    "content": "The simplest way to provide binary content, is by defining it in the psalms itself. source: content: \"my file!\" . It supports multiline content as well: . source: content: | &lt;body&gt; &lt;p&gt;lorem ipsum&lt;/p&gt; &lt;/body&gt; . ",
+    "url": "/docs/resources/deacon.html#inline",
+    "relUrl": "/docs/resources/deacon.html#inline"
+  },"9": {
+    "doc": "Deacons",
+    "title": "Templating",
+    "content": "Every (except Simple) Source flavor supports templating as well, just add it to your configuration. source: content: | {% set name = \"trpouh\" %} hello {{ name }} template: flavor: J2 . which will result in the following string: . hello trpouh . ",
+    "url": "/docs/resources/deacon.html#templating",
+    "relUrl": "/docs/resources/deacon.html#templating"
+  },"10": {
+    "doc": "Deacons",
+    "title": "Destination",
+    "content": "Providing a destination is as simple as providing a string: . # will fail if the target file does not exist target: \"/foo/bar.txt\" . If you want to provide more settings, there is also the Complex option: . field: # required name: /foo/bar.txt # optional; default: false create: true # optional; default: false create_parents: false . In the example above the psalm will fail if the /foo directory does not exist. ",
+    "url": "/docs/resources/deacon.html#destination",
+    "relUrl": "/docs/resources/deacon.html#destination"
+  },"11": {
+    "doc": "Deacons",
+    "title": "Deacons",
+    "content": "A deacon is a member of the diaconate, an office in Christian churches that is generally associated with service of some kind […] . The API of the Preacher is designed to be as simple as possible while preserving high flexibility. Deacons allow us to share non-business logic among different psalms so that they can be tailored specifically to your needs without any extra headache. ",
+    "url": "/docs/resources/deacon.html",
+    "relUrl": "/docs/resources/deacon.html"
+  },"12": {
+    "doc": "Essentials",
+    "title": "Essentials",
+    "content": "All the neccessary information we think you should know to start experimenting with the Preacher. | One Minuter: Quick Overview of the concepts of the Preacher (reading time: 1 minute) . | Quickstart Guide : Install the Preacher and create your first Sermon . | Next steps : Links the previously learned concepts with documentation to help you continue your journey. | . ",
+    "url": "/docs/essentials/essentials.html",
+    "relUrl": "/docs/essentials/essentials.html"
+  },"13": {
+    "doc": "Welcome",
+    "title": "Welcome",
+    "content": "Be advised, Preacher is still young and unstable. Use at your own risk. If you discover bugs or have a feature request open an Issue. Welcome to the Preacher documentation. Preacher is a system-level automation tool built in rust. If you want to skip reading documentation (not recommended!) and want to start automating right away we’ve got you covered in the Quickstart Guide. ",
+    "url": "/",
+    "relUrl": "/"
+  },"14": {
+    "doc": "Welcome",
+    "title": "Documentation structure",
+    "content": "Everyone has their prefered method to start experimenting with new tools. To help you with your journey, we recommend starting with these chapters: . | Essentials: Start here. From installing preacher to creating your first Sermon, we’ve got you covered. (for starting) | Understanding: Documentation to gain deeper understanding about the preacher and its components (for learning) | Resources: All possible types of configurations, psalms, and co (for working) | . ",
+    "url": "/#documentation-structure",
+    "relUrl": "/#documentation-structure"
+  },"15": {
+    "doc": "(TBA) Main concepts",
+    "title": "(TBA) Main concepts",
+    "content": "TBA . ",
+    "url": "/docs/understanding/main-concepts.html",
+    "relUrl": "/docs/understanding/main-concepts.html"
+  },"16": {
+    "doc": "(TBA) Main principles",
+    "title": "(TBA) Main principles",
+    "content": "TBA . ",
+    "url": "/docs/understanding/main-principles.html",
+    "relUrl": "/docs/understanding/main-principles.html"
+  },"17": {
+    "doc": "Next steps",
+    "title": "Next steps",
+    "content": "Ready to learn more? Great. Now you get to choose how you want to continue. Depending on what you want to do first, these documents may be of help: . | Explore all the available types of Psalms | Gain deeper understanding | Take a look at the source code | . ",
+    "url": "/docs/essentials/next-steps.html",
+    "relUrl": "/docs/essentials/next-steps.html"
+  },"18": {
+    "doc": "One Minuter",
+    "title": "One Minuter",
+    "content": "Reading time: 1 Minute . Preacher is an Open-Source automation tool used to configure, orchestrate and administrate devices. Its a binary application with a very small footprint (Build for Apple: ~700kb) that uses so called Sermons to summarize subtasks (i.e. copying a file, executing a script) that can be configured and reused throughout your environment. We put great emphasis on flexibility and simplicity when wiritng Psalms. (More here) . To copy a file to a target device a sermon could look as simple as this: . # sermon.yaml psalms: - id: copy webpage type: File source: \"index.html\" destination: \"index.html\" . The preacher initiates a Worship in which a Sermon is preached. The worship contains all necessary information about the Sermon and how the preaching should be done (target folder, source folder, etc.). The fastest way to start preaching is by using a local sermon: . $ # on the target machine $ preacher -s ./sermon.yaml . However, we know that IaC combined with version control can be very powerful so Preacher supports fetching sermons from git repositories as well: . $ preacher -r http://github.com/repo.git \\ -b main \\ -s sermon.yaml . This was a quick introdution about the features of the Preacher. To start experimenting with preacher right away (the installation is a one-minuter as well) check the Quickstart Guide. If you just want to look around, check the Next steps to find the right docs for all your questions. ",
+    "url": "/docs/essentials/one-minuter.html",
+    "relUrl": "/docs/essentials/one-minuter.html"
+  },"19": {
+    "doc": "Psalms",
+    "title": "Psalms",
+    "content": "a sacred song or poem used in worship . Psalms are the heart of every worship. They are defined in a list in the sermon.yaml file. They have a simple structure: . - type: String id: Optional&lt;String&gt; name: Optional&lt;String&gt; . | type defines its purpose. | id can be used for logic | name can be used for documentation/logging purposes | . Hello . hello world to verify a successful installation of the preacher . - type: Hello # optional name: String . Timezone . change the timezone by leveraging datetimectl (needs sudo) . - type: Timezone # timezone as defined in the tz database # see: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones # example: Austria/Vienna tz: String . Yaml . Manipulate the yaml content of a file (see File). it will override the object provided via the path. If you set the path $ it will override the whole file. - type: Yaml source: FileSource # &lt;&lt; Deacon (see FileSource) destination: FileDestination # &lt;&lt; Deacon (see FileDestination) yaml_path: String # optional; default: $ . example (add a child to the root object): . - type: Yaml source: content: | name: John Doe age: 25 target: \"my-file.yaml\" yaml_path: \"$.participant\" . will result in: . # my-file.yaml (before) foo: \"bar\" # my-file.yaml (after) foo: \"bar\" participant: name: \"John Doe\" age: \"25\" . File . A simple psalm to copy a file to your target machine . # Example \"File Psalm\" - type: File source: FileSource # &lt;&lt; Deacon (see FileSource) destination: FileDestination # &lt;&lt; Deacon (see FileDestination) . ",
+    "url": "/docs/resources/psalm.html",
+    "relUrl": "/docs/resources/psalm.html"
+  },"20": {
+    "doc": "Psalms",
+    "title": "Deacons",
+    "content": "A deacon is a member of the diaconate, an office in Christian churches that is generally associated with service of some kind […] . Deacons are powerful datatypes to help standardize common processes. They are documented as datatypes in psalms. FileSource . This deacon provides the ability to easily access files from different sources, such as: . | git | http (todo!) | local | inline | . the type that’s being used is decided by the structure of the given data: . # local simple field: String # local complex field: path: String # default: false (path is relative to worship, otherwise # is relative to target_folder ) in_worship: Optional&lt;boolean&gt;; # http (todo!) field: url: String # git field: repo: String file: String branch: Optional&lt;String&gt; inline: content: String . Let’s look at an example to see why this is so powerful. A simple file copy (using the File Psalm). # sermon.yaml psalms: - type: File source: \"file.txt\" destination: \"file-target.txt\" . This is a simple as it can get. But what if you want to store the file in a git repository? No problem. Just change the structure of source: . # sermon.yaml psalms: - type: File source: repo: https://github.com/&lt;your-repo&gt;.git branch: main file: file.txt destination: \"file-target.txt\" . If you don’t want to bother creating and downloading a file, just use inline. # sermon.yaml psalms: - type: File source: content: | hey! this is my file. destination: \"file-target.txt\" . Templating . Every FileSource is templatable. It doesn’t matter whether its retrieved via git, http or inline. Just configure it by adding a templating flavor (currently supported is J2): . vars: name: trpouh # sermon.yaml psalms: - type: File source: content: | hey! this is . template: flavor: J2 destination: \"file-target.txt\" . Same applies to a git retrieved file: . vars: name: trpouh # sermon.yaml psalms: - type: File source: repo: https://github.com/&lt;your-repo&gt;.git branch: main file: file.txt template: flavor: J2 destination: \"file-target.txt\" . Compared to ansible-pull, where you would have to use different modules for every use case, this seems like a much more elegant solution. # Simple file copy - name: copy ansible.builtin.copy: src: file.txt dest: /file-target.txt # Templating a local file - name: template template: src: templates/file.j2 dest: /file-target.txt # Downloading from git - name: Git checkout ansible.builtin.git: repo: https://github.com/&lt;your-repo&gt;.git dest: /file-target.txt # Template file from git # According to https://stackoverflow.com/questions/33163204/ansible-remote-templates # Found no example in the official ansible doc - name : clone repo on Ansible host hosts : localhost connection : local git : repo : dest : - name : template remote hosts template : src : dest : owner : group : mode : . FileDestination . There are multiple ways to define a file destination. The simple on is by providing just a filename: . # will fail if the target file does not exist field: String . If you want to provide more settings, there is also the complex option: . field: # required name: String # optional; default: false create: boolean # optional; default: false create_parents: boolean . ",
+    "url": "/docs/resources/psalm.html#deacons",
+    "relUrl": "/docs/resources/psalm.html#deacons"
+  },"21": {
+    "doc": "Quickstart Guide",
+    "title": "Quickstart Guide",
+    "content": "In this guide you will get preacher up and running and have your first worship. ",
+    "url": "/docs/essentials/quickstart.html",
+    "relUrl": "/docs/essentials/quickstart.html"
+  },"22": {
+    "doc": "Quickstart Guide",
+    "title": "Prerequisites",
+    "content": "Preacher can be run on most unix based systems. If you’re not sure whether your target OS is supported or not please take a look at the releases. Depending on what kind of psalms you want to run, additional tools may be required as well. ",
+    "url": "/docs/essentials/quickstart.html#prerequisites",
+    "relUrl": "/docs/essentials/quickstart.html#prerequisites"
+  },"23": {
+    "doc": "Quickstart Guide",
+    "title": "Installation",
+    "content": "Download the the latest release for your OS. Alternatively you can use the installation kickstarter script. ",
+    "url": "/docs/essentials/quickstart.html#installation",
+    "relUrl": "/docs/essentials/quickstart.html#installation"
+  },"24": {
+    "doc": "Quickstart Guide",
+    "title": "Create a sermon",
+    "content": "The default language for sermons is YAML (Support for other markup languages like JSON or XML is planned). The most important parts of a sermon are: variables and psalms. # sermon.yaml vars: {} psalms: [] . Psalms contain information about the to be automated tasks. The simplest one is the Hello task. # sermon.yaml vars: {} psalms: - type: Hello . running this sermon via . $ ./preacher -s sermon.yaml . produces the following output (ommited for readability): . hey there stranger! congratulations to your first successful worship. The Hello psalms provides a mechanism to customize the output message via the name attribute. Let’s set the name and run it again. # sermon.yaml # vars ommited because not needed and nullable psalms: - type: Hello name: trpouh . hey there trpouh! congratulations to your first successful worship. ",
+    "url": "/docs/essentials/quickstart.html#create-a-sermon",
+    "relUrl": "/docs/essentials/quickstart.html#create-a-sermon"
+  },"25": {
+    "doc": "Quickstart Guide",
+    "title": "Level it up with Deacons",
+    "content": "Seems pretty straight forward but the real power of Psalms can be seen when leveraging Deacons. We believe that many different tasks come down to a small set of principles/processes. So to allow for high flexbility in your automation with a simple API we came up with Deacons. Let’s look at an example: Copying content from A to B is a pretty standard task. In Preacher this can be done with the File psalm: . # sermon.yaml psalms: - type: File source: \"myfile.txt\" destination: \"dir/myfile.txt\" . So far so good. But what if you want to copy the file from a git repo to the given destination? The logic (Copy content from A to B) stays the same. The only thing that changes is the file source, and thats what we’re going to do: . # sermon.yaml psalms: - type: File source: repo: https://server.com/repo.git branch: main file: myfile.txt destination: \"dir/myfile.txt\" . Neat, right? If you now wanted to template this file in some automation-tools this can be a bit tricky. In Preacher its as simple as adding a template parameter like so: . # sermon.yaml psalms: - type: File source: repo: https://server.com/repo.git branch: main file: myfile.txt.j2 template: flavor: J2 destination: \"dir/myfile.txt\" . ",
+    "url": "/docs/essentials/quickstart.html#level-it-up-with-deacons",
+    "relUrl": "/docs/essentials/quickstart.html#level-it-up-with-deacons"
+  },"26": {
+    "doc": "Quickstart Guide",
+    "title": "Real-life example",
+    "content": "As we learned in the previous chapter, we can easily swap parts of the psalm without having to change the logic (i.e. the type of a psalm). To showcase this, we’re gonna create a psalm that contains a templatable literal, that uses a variable defined in the vars object of the psalm. First define the variable: . The configuration of variables is designed to work similarly to Microprofile-Config. # sermon.yaml vars: name: env: NAME default: trpouh psalms: [] . Then the psalm (this time we are using the content-method to define the source): . # sermon.yaml vars: name: env: NAME default: trpouh psalms: - type: File source: content: | {{ name }} was here! template: flavor: J2 destination: \"dir/myfile.txt\" . which results in the following result: . $ cat dir/myfile.txt trpouh was here! . or - when setting the environment variable - like this: . $ NAME=nottrpouh ./preacher [...] $ cat dir/myfile.txt nottrpouh was here! . Thanks for reading the Quickstart Guide. If you want to continue your learning journey, please refer to the Next Steps. ",
+    "url": "/docs/essentials/quickstart.html#real-life-example",
+    "relUrl": "/docs/essentials/quickstart.html#real-life-example"
+  },"27": {
+    "doc": "Quickstart Guide",
+    "title": "Table of contents",
+    "content": ". | Quickstart Guide . | Prerequisites | Installation | Create a sermon | Level it up with Deacons | Real-life example | . | . ",
+    "url": "/docs/essentials/quickstart.html#table-of-contents",
+    "relUrl": "/docs/essentials/quickstart.html#table-of-contents"
+  },"28": {
+    "doc": "Resources",
+    "title": "Resources",
+    "content": " ",
+    "url": "/docs/resources/resources.html",
+    "relUrl": "/docs/resources/resources.html"
+  },"29": {
+    "doc": "Sermon",
+    "title": "Sermon",
+    "content": " ",
+    "url": "/docs/resources/sermon.html",
+    "relUrl": "/docs/resources/sermon.html"
+  },"30": {
+    "doc": "Timezone",
+    "title": "Syntax",
+    "content": "Default Flavor . | field | type/format | required (default value) | example | . | tz | string | yes | Austria/Vienna | . ",
+    "url": "/docs/resources/psalms/timezone.html#syntax",
+    "relUrl": "/docs/resources/psalms/timezone.html#syntax"
+  },"31": {
+    "doc": "Timezone",
+    "title": "Requirements",
+    "content": "The timedatectl package and sudo access . ",
+    "url": "/docs/resources/psalms/timezone.html#requirements",
+    "relUrl": "/docs/resources/psalms/timezone.html#requirements"
+  },"32": {
+    "doc": "Timezone",
+    "title": "Examples",
+    "content": "# sermon.yaml psalms: - type: Timezone tz: Austria/Vienna . ",
+    "url": "/docs/resources/psalms/timezone.html#examples",
+    "relUrl": "/docs/resources/psalms/timezone.html#examples"
+  },"33": {
+    "doc": "Timezone",
+    "title": "Timezone",
+    "content": "Set the timezone as deinfed in the TZ Database . # sermon.yaml psalms: - type: Timezone tz: String . ",
+    "url": "/docs/resources/psalms/timezone.html",
+    "relUrl": "/docs/resources/psalms/timezone.html"
+  },"34": {
+    "doc": "Understanding",
+    "title": "Understanding",
+    "content": "These pages help you understand why things are the way the are in Preacher. | Main Concepts: An overview over all components/datatypes used in the Preacher | Main Principles: The API of the Preacher is designed with a couple premisses in mind. Find them here. | | . ",
+    "url": "/docs/understanding/understanding.html",
+    "relUrl": "/docs/understanding/understanding.html"
+  },"35": {
+    "doc": "Worship",
+    "title": "Worship",
+    "content": " ",
+    "url": "/docs/resources/worship.html",
+    "relUrl": "/docs/resources/worship.html"
+  }
+}
