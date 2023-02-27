@@ -12,6 +12,7 @@ pub mod hello;
 pub mod tz;
 pub mod yaml;
 pub mod sermon;
+pub mod exec;
 
 pub mod prelude {
     pub mod core {
